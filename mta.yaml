@@ -19,6 +19,8 @@ modules:
       buildpack: nodejs_buildpack
       readiness-health-check-type: http
       readiness-health-check-http-endpoint: /health
+      memory: 512M
+      disk-quota: 512M
     build-parameters:
       builder: npm
     provides:
@@ -112,6 +114,8 @@ resources:
                 ProxyType: Internet
                 Type: HTTP
                 URL: https://ui5.sap.com
+    requires:
+      - name: srv-api
 
   - name: cap-basic-html5-repo-host
     type: org.cloudfoundry.managed-service
