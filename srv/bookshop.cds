@@ -15,6 +15,7 @@ service BookshopService @(requires: 'authenticated-user') {
     action   testExternalService();
     action   stopJob();
     function getCustomers() returns BusinessPartnerType.customers;
+    function getProcedureResult() returns edu03.ProcedureReturn;
 
     event receiveEvent : {
         eventid : String(50);

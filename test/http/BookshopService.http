@@ -109,3 +109,9 @@ Content-Type: application/json
 {{auth}}  
   
 {}
+
+### getProcedureResult
+# @name getProcedureResult_GET
+GET {{server}}/odata/v4/bookshop/getProcedureResult
+Content-Type: application/json
+{{auth}}

@@ -20,3 +20,8 @@ type Genre : String enum {
     Fiction;  
     Drama;  
 }
+
+type ProcedureReturn : array of {
+	ID: String;
+	name: String;
+}

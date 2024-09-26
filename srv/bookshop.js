@@ -81,13 +81,20 @@ module.exports = class BookshopService extends cds.ApplicationService {
             return await NorthwindService.run(req.query);
         });
 
+        this.on('getProcedureResult', async (req, next) => {  
+
+            let sQuery = `Call "procedure01"(OUTPUTTAB => ?)`;  
+            const result = await cds.run(sQuery, {});  
+            return result.OUTPUTTAB;  
+        })
+
         // background  
-        job = cds.spawn({  
-            every: 10000,  
-            after: 60000  
-        }, async() => {  
-            console.log(new Date().toString());  
-        });    
+        // job = cds.spawn({  
+        //     every: 10000,  
+        //     after: 60000  
+        // }, async() => {  
+        //     console.log(new Date().toString());  
+        // });    
         
         this.on('stopJob', (req, next) => {  
             if (job) {  
