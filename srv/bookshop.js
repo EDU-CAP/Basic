@@ -1,4 +1,5 @@
 const cds = require('@sap/cds');
+const LOG = cds.log('sql')
 
 module.exports = class BookshopService extends cds.ApplicationService {
     async init() {
@@ -6,6 +7,59 @@ module.exports = class BookshopService extends cds.ApplicationService {
         let job = null;
         const BusinessParterService = await cds.connect.to('Business.Partners');
         const NorthwindService = await cds.connect.to('northwind');
+
+        const { Authors } = this.entities;
+
+        this.before('CREATE', 'Authors', (req) => {  
+            const { name } = req.data;  
+  
+            if (!name) {  
+                LOG.error('이름을 입력해주세요');
+                req.reject(  
+                    {  
+                        code: 'A001',  
+                        message: '이름을 입력해주세요',  
+                        target: 'name',  
+                        status: 400  
+                    }  
+                )  
+            }  
+        });
+
+        // this.on('CREATE', 'Authors', async (req, next) => {  
+        //     let { name } = req.data;  
+  
+        //     req.data.name = `${name}Test`;  
+  
+        //     return next();  
+        // });
+
+        this.after('READ', 'Authors', (results, req) => {  
+            return results.map((result) => {  
+                result.Address = 'Test';  
+                return result;  
+            });  
+        })
+
+        this.on('CREATE', 'Authors', async (req, next) => {  
+            let { name } = req.data;  
+        
+            name = `${name}Test`;  
+        
+            const results = await INSERT.into(Authors).entries([  
+                { name: name }  
+            ]);  
+        
+            return SELECT.from(Authors).where`ID in ${[...results].map((result) => result.ID)}`;  
+        });
+
+        this.after('CREATE', 'Authors', (results, req) => {  
+            cds.spawn({  
+                after: 10000  
+            }, async() => {  
+                console.log(results);  
+            })  
+        });
 
         this.before('READ', 'Books', (req) => {
             console.log(req.user);
