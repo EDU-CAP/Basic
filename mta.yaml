@@ -59,18 +59,6 @@ modules:
       - name: cap-basic-destination
       - name: cap-basic-html5-runtime
 
-  - name: cap-basic-app-deployer
-    type: com.sap.application.content
-    path: gen
-    requires:
-      - name: cap-basic-html5-repo-host
-        parameters:
-          content-target: true
-    build-parameters:
-      build-result: app/
-      requires:
-
-
 resources:
   - name: cap-basic-auth
     type: org.cloudfoundry.managed-service
