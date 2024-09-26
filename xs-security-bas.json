@@ -1,12 +1,13 @@
 {
+  "xsappname": "edu04-02-auth-bas",  
+  "tenant-mode": "dedicated", 
   "scopes": [],
   "attributes": [],
   "role-templates": [],
   "authorities-inheritance": false,
   "oauth2-configuration": {
     "redirect-uris": [
-      "https://*.us10-001.hana.ondemand.com/**"
-
+      "https://*.us10.trial.applicationstudio.cloud.sap/**"
     ]
   }
 }
