@@ -104,5 +104,10 @@ POST {{server}}/odata/v4/bookshop/testExternalService
 Content-Type: application/json
 {{auth}}
 
-{
-}
+### stopJob  
+# @name stopJob_POST  
+POST {{server}}/odata/v4/bookshop/stopJob  
+Content-Type: application/json  
+{{auth}}  
+  
+{}

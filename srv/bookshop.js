@@ -3,6 +3,7 @@ const cds = require('@sap/cds');
 module.exports = class BookshopService extends cds.ApplicationService {
     async init() {
 
+        let job = null;
         const BusinessParterService = await cds.connect.to('Business.Partners');
         const NorthwindService = await cds.connect.to('northwind');
 
@@ -25,6 +26,20 @@ module.exports = class BookshopService extends cds.ApplicationService {
         this.on('READ', 'BookshopOrders', async (req, next) => {
             return await NorthwindService.run(req.query);
         });
+
+        // background  
+        job = cds.spawn({  
+            every: 10000,  
+            after: 60000  
+        }, async() => {  
+            console.log(new Date().toString());  
+        });    
+        
+        this.on('stopJob', (req, next) => {  
+            if (job) {  
+                clearInterval(job.timer);  
+            }  
+        })
 
         // 필수입력  
         return super.init()

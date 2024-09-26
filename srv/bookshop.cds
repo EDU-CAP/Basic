@@ -8,6 +8,7 @@ service BookshopService @(requires: 'authenticated-user') {
     entity BookshopOrders as projection on northwindOrders;
       
     action testExternalService();  
+    action stopJob();
      
     function getCustomers() returns BusinessPartnerType.customers;  
 
