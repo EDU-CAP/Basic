@@ -21,10 +21,12 @@
   },
   "cds": {
     "requires": {
-      "auth": "xsuaa",
-      "connectivity": true,
-      "destinations": true,
-      "html5-repo": true
+      "[production]" : {
+        "auth": "xsuaa",
+        "connectivity": true,
+        "destinations": true,
+        "html5-repo": true
+      }
     },
     "sql": {
       "native_hana_associations": false
