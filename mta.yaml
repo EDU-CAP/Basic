@@ -102,6 +102,10 @@ resources:
           instance:
             existing_destinations_policy: update
             destinations:
+              - Name: northwind
+                Type: HTTP
+                ProxyType: Internet
+                Authentication: NoAuthentication
               - Name: cap-basic-srv-api
                 URL: ~{srv-api/srv-url}
                 Authentication: OAuth2UserTokenExchange

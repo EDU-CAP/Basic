@@ -6,10 +6,12 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
+    "@cap-js/hana": "^1",
+    "@sap-cloud-sdk/http-client": "^3.21.0",
+    "@sap-cloud-sdk/resilience": "^3.21.0",
     "@sap/cds": "^8",
-    "express": "^4",
     "@sap/xssec": "^4",
-    "@cap-js/hana": "^1"
+    "express": "^4"
   },
   "devDependencies": {
     "@cap-js/cds-types": "^0.6",
@@ -21,21 +23,41 @@
   },
   "cds": {
     "requires": {
-      "[production]" : {
+      "[production]": {
         "auth": "xsuaa",
         "connectivity": true,
         "destinations": true,
         "html5-repo": true
+      },
+      "Business.Partners": {
+        "kind": "rest",
+        "model": "srv/external/BusinessPartner_APIs",
+        "credentials": {
+          "destination": "apihub"
+        }
+      },
+      "northwind": {
+        "kind": "odata",
+        "model": "srv/external/northwind",
+        "credentials": {
+          "destination": "northwind"
+        }
+      },
+      "[hybrid]": {
+        "messaging": {
+          "kind": "file-based-messaging",
+          "file": "./msg-box"
+        }
       }
     },
     "sql": {
       "native_hana_associations": false
-    }, 
-    "fiori": {  
-      "preview": true  
-    },  
-    "server": {  
-      "index": true  
-    } 
+    },
+    "fiori": {
+      "preview": true
+    },
+    "server": {
+      "index": true
+    }
   }
 }

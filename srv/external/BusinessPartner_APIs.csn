@@ -1,0 +1,1596 @@
+{
+ "definitions": {
+  "Business.Partners": {
+   "kind": "service",
+   "@Capabilities.BatchSupported": false,
+   "@Capabilities.KeyAsSegmentSupported": true,
+   "@Core.Description": "Business Partners",
+   "@Core.SchemaVersion": "3",
+   "@Core.LongDescription": "Enables you to create and manage business partner data, including customer data, contact data, and customer-contact relationships."
+  },
+  "Business.Partners.customers": {
+   "kind": "function",
+   "params": {
+    "notReplicatedWithExternalSystemId": {
+     "type": "cds.String",
+     "@description": "This query parameter is used to fetch customer data that was not replicated. If this parameter is specified, the query parameter `q` will have no effect on the returned results.",
+     "@openapi.in": "query"
+    },
+    "pageNumber": {
+     "type": "cds.Integer",
+     "@description": "The page number to be retrieved where the size of the pages must be specified by the pageSize parameter. The number of the first page is 1.",
+     "@openapi.in": "query"
+    },
+    "pageSize": {
+     "type": "cds.Integer",
+     "default": {
+      "val": 10
+     },
+     "@description": "The number of records retrieved at one time.",
+     "@openapi.in": "query"
+    },
+    "sort": {
+     "type": "cds.String",
+     "@description": "The list of comma-separated properties used to sort the results.\nBy default, the column values are sorted in ascending order. \nCan either be in the form of `fieldName`, `fieldName:asc`, or `fieldName:desc`.",
+     "@openapi.in": "query"
+    },
+    "expand": {
+     "type": "cds.String",
+     "@description": "Controls which elements of a customer are expanded (included) in the returned customer.\nAvailable elements are:\n    \n- `markets` - includes markets information.\n- `addresses` - includes all customer addresses.\n- `defaultAddress` - includes the default address as defaultAddress property.\n- `customReferences` - includes custom references information.\n- `all` - includes all markets, addresses, defaultAddress information.\n\nThe elements can be combined by separating them with a comma.",
+     "@openapi.in": "query"
+    },
+    "q": {
+     "type": "cds.String",
+     "@description": "The simple query criteria based on available fields to limit returned results or a set of modified documents. A query string contains single or multiple key words. If multiple key words are used, use a space to separate key words. The wildcard (*) is supported to represent one or more characters. If the query parameter q is not specified, only the latest 10 items created will be returned.If you want to search for a value that includes spaces, use '~~' to represent the spaces.Currently, we support the query formats below. Please use these formats to build your query string.\nAvailable formats are:\n\n- `OR` - firstName:Mark company:*ngom* lastName:*ab*\n- `AND` - createdAt>2017-06-14T09:07:15.096Z AND customerType:INDIVIDUAL AND externalObjectReferences.externalId!:1\n- `OR & AND` - (firstName:Mark company:*ngom* lastName:*a~~b*) AND createdAt>2017-06-14T09:07:15.096Z AND externalObjectReferences.externalId!:1\n\nThe following query key words are supported:\n\n- customerNumber\n- mdiId\n- customerType\n- firstName\n- lastName\n- company\n- name\n- createdAt\n- changedAt\n- createdBy\n- changedBy\n- externalObjectReferences.externalSystemId\n- externalObjectReferences.externalId\n- externalObjectReferences.externalIdTypeCode\n- markets.marketId\n- markets.active\n- customReferences.typeCode\n- customReferences.id\n- addresses.email\n- addresses.phone\n- addresses.street\n- addresses.houseNumber\n- addresses.city\n- addresses.state\n- addresses.postalCode\n- addresses.country\n- addresses.isDefault\n\nThe value for createdAt and changedAt must be a UTC date and time in ISO 8601 format, such as: `yyyy-MM-dd'T'HH:mm:ss.SSSZ`.",
+     "@openapi.in": "query"
+    },
+    "_count": {
+     "type": "cds.Boolean",
+     "default": {
+      "val": true
+     },
+     "@description": "If `false`, the response headers `x-count` and `x-pagecount` will not be returned. The recommended setting is `false` if not otherwise required by a special use case, as this results in a significantly faster response time.",
+     "@openapi.in": "query",
+     "@openapi.name": "$count"
+    }
+   },
+   "@Common.Label": "Customer Management",
+   "@Core.Description": "Retrieves customers.",
+   "@Core.LongDescription": "Retrieves a collection of customers that match the search criteria.<br><br>This operation requires the scope `business-partner-customer_view`.",
+   "@openapi.path": "/customers",
+   "returns": {
+    "type": "Business.Partners_types.customers"
+   }
+  },
+  "Business.Partners.customers_post": {
+   "kind": "action",
+   "params": {
+    "externalSystemId": {
+     "type": "cds.String",
+     "@description": "The ID of the external system that is used for data replication in an integration scenario. When this header is specified, the replication status of the external system will be set to true.",
+     "@openapi.in": "header"
+    },
+    "body": {
+     "type": "Business.Partners_types.postCustomerSchema",
+     "@openapi.in": "body"
+    }
+   },
+   "@Common.Label": "Customer Management",
+   "@Core.Description": "Creates a customer.",
+   "@Core.LongDescription": "Before you use this operation, check the [API Guide](https://help.sap.com/viewer/987aec876092428f88162e438acf80d6/latest/en-US/7373ddb2b26d4b25b4b7768eb8d24f72.html) for important information.<br><br>This operation requires the scope `business-partner-customer_manage`.",
+   "@openapi.path": "/customers",
+   "returns": {
+    "type": "Business.Partners_types.resourceLocation"
+   }
+  },
+  "Business.Partners.customers_": {
+   "kind": "function",
+   "params": {
+    "customerNumber": {
+     "type": "cds.String",
+     "@description": "Specific customer number to identify one customer.",
+     "@openapi.in": "path"
+    },
+    "expand": {
+     "type": "cds.String",
+     "@description": "Controls which elements of a customer are expanded (included) in the returned customer.\nAvailable elements are:\n    \n- `markets` - includes markets information.\n- `addresses` - includes all customer addresses.\n- `defaultAddress` - includes the default address as defaultAddress property.\n- `customReferences` - includes custom references information.\n- `all` - includes all markets, addresses, defaultAddress information.\n\nThe elements can be combined by separating them with a comma.",
+     "@openapi.in": "query"
+    }
+   },
+   "@Common.Label": "Customer Management",
+   "@Core.Description": "Retrieves a customer.",
+   "@Core.LongDescription": "Retrieves a single customer with a specific identifier.<br><br>This operation requires the scope `business-partner-customer_view`.",
+   "@openapi.path": "/customers/{customerNumber}",
+   "returns": {
+    "type": "Business.Partners_types.customer"
+   }
+  },
+  "Business.Partners.customers__put": {
+   "kind": "action",
+   "params": {
+    "customerNumber": {
+     "type": "cds.String",
+     "@description": "Specific customer number to identify one customer.",
+     "@openapi.in": "path"
+    },
+    "externalSystemId": {
+     "type": "cds.String",
+     "@description": "The ID of the external system that is used for data replication in an integration scenario. When this header is specified, the replication status of the external system will be set to true.",
+     "@openapi.in": "header"
+    },
+    "body": {
+     "type": "Business.Partners_types.putCustomerSchema",
+     "@openapi.in": "body"
+    }
+   },
+   "@Common.Label": "Customer Management",
+   "@Core.Description": "Updates a customer.",
+   "@Core.LongDescription": "Updates a single customer with a specific identifier.<br>Before you use this operation, check the [API Guide](https://help.sap.com/viewer/987aec876092428f88162e438acf80d6/latest/en-US/1869a4d94786454e89935d860114c2a6.html) for important information.<br><br>This operation requires the scope `business-partner-customer_manage`.",
+   "@openapi.method": "PUT",
+   "@openapi.path": "/customers/{customerNumber}"
+  },
+  "Business.Partners.customers__delete": {
+   "kind": "action",
+   "params": {
+    "customerNumber": {
+     "type": "cds.String",
+     "@description": "Specific customer number to identify one customer.",
+     "@openapi.in": "path"
+    }
+   },
+   "@Common.Label": "Customer Management",
+   "@Core.Description": "Delete a customer.",
+   "@Core.LongDescription": "Deletes a single customer with a specific identifier. The customer cannot be deleted when there are existing documents.<br><br>This operation requires the scope `business-partner-customer_delete`.",
+   "@openapi.method": "DELETE",
+   "@openapi.path": "/customers/{customerNumber}"
+  },
+  "Business.Partners.customers__externalObjectReferences": {
+   "kind": "function",
+   "params": {
+    "customerNumber": {
+     "type": "cds.String",
+     "@description": "Specific customer number to identify one customer.",
+     "@openapi.in": "path"
+    }
+   },
+   "@Common.Label": "Customer Management",
+   "@Core.Description": "Retrieves external object references for a customer.",
+   "@Core.LongDescription": "Retrieves the external object references for a single customer with a specific identifier.<br><br>This operation requires the scope `business-partner-customer_view`.",
+   "@openapi.path": "/customers/{customerNumber}/externalObjectReferences",
+   "returns": {
+    "type": "Business.Partners_types.getExternalIdSchema"
+   }
+  },
+  "Business.Partners.customers__externalObjectReferences_put": {
+   "kind": "action",
+   "params": {
+    "customerNumber": {
+     "type": "cds.String",
+     "@description": "Specific customer number to identify one customer.",
+     "@openapi.in": "path"
+    },
+    "externalSystemId": {
+     "type": "cds.String",
+     "@description": "The ID of the external system that is used for data replication in an integration scenario. When this header is specified, the replication status of the external system will be set to true.",
+     "@openapi.in": "header"
+    },
+    "body": {
+     "type": "Business.Partners_types.externalIdsSchema",
+     "@openapi.in": "body"
+    }
+   },
+   "@Common.Label": "Customer Management",
+   "@Core.Description": "Updates external object references for a customer.",
+   "@Core.LongDescription": "Updates the external object references for a single customer with a specific identifier.<br>Before you use this operation, check the [API Guide](https://help.sap.com/viewer/987aec876092428f88162e438acf80d6/latest/en-US/15c565f688684c1f8219e8369ff3813f.html) for important information.<br><br>This operation requires the scope `business-partner-customer_manage`.",
+   "@openapi.method": "PUT",
+   "@openapi.path": "/customers/{customerNumber}/externalObjectReferences"
+  },
+  "Business.Partners.contacts": {
+   "kind": "function",
+   "params": {
+    "notReplicatedWithExternalSystemId": {
+     "type": "cds.String",
+     "@description": "This query parameter is used to fetch contact data that was not replicated. If this parameter is specified, the query parameter **q** will have no effect on the returned results.",
+     "@openapi.in": "query"
+    },
+    "pageNumber": {
+     "type": "cds.Integer",
+     "@description": "The page number to be retrieved where the size of the pages must be specified by the pageSize parameter. The number of the first page is 1.",
+     "@openapi.in": "query"
+    },
+    "pageSize": {
+     "type": "cds.Integer",
+     "default": {
+      "val": 10
+     },
+     "@description": "The number of records retrieved at one time.",
+     "@openapi.in": "query"
+    },
+    "sort": {
+     "type": "cds.String",
+     "@description": "The list of comma-separated properties used to sort the results.\nBy default, the column values are sorted in ascending order. \nCan either be in the form of `fieldName`, `fieldName:asc`, or `fieldName:desc`.",
+     "@openapi.in": "query"
+    },
+    "q": {
+     "type": "cds.String",
+     "@description": "The simple query criteria based on available fields to limit returned results or a set of modified documents. A query string contains single or multiple key words. If multiple key words are used, use a space to separate key words. The wildcard (*) is supported to represent one or more characters. If the query parameter q is not specified, only the latest 10 items created will be returned.If you want to search for a value that includes spaces, use '~~' to represent the spaces.Currently, we support the query formats below. Please use these formats to build your query string.\nAvailable formats are:\n\n- `OR` - firstName:Mark company:*ngom* lastName:*ab*\n- `AND` - createdAt>2017-06-14T09:07:15.096Z AND customerType:INDIVIDUAL AND externalObjectReferences.externalId!:1\n- `OR & AND` - (firstName:Mark company:*ngom* lastName:*a~~b*) AND createdAt>2017-06-14T09:07:15.096Z AND externalObjectReferences.externalId!:1\n\nThe following query key words are supported:\n\n- contactNumber\n- firstName\n- lastName\n- createdAt\n- changedAt\n- createdBy\n- changedBy\n- externalObjectReferences.externalSystemId\n- externalObjectReferences.externalId\n- externalObjectReferences.externalIdTypeCode\n\nThe value for createdAt and changedAt must be a UTC date and time in ISO 8601 format, such as: `yyyy-MM-dd'T'HH:mm:ss.SSSZ`.",
+     "@openapi.in": "query"
+    },
+    "_count": {
+     "type": "cds.Boolean",
+     "default": {
+      "val": false
+     },
+     "@description": "If `false`, the response headers `x-count` and `x-pagecount` will not be returned. The recommended setting is `false` if not otherwise required by a special use case, as this results in a significantly faster response time.",
+     "@openapi.in": "query",
+     "@openapi.name": "$count"
+    }
+   },
+   "@Common.Label": "Contact Management",
+   "@Core.Description": "Retrieves contacts.",
+   "@Core.LongDescription": "Retrieves a collection of contacts that match the search criteria.<br><br>This operation requires the scope `business-partner-contact_view`.",
+   "@openapi.path": "/contacts",
+   "returns": {
+    "type": "Business.Partners_types.contacts"
+   }
+  },
+  "Business.Partners.contacts_post": {
+   "kind": "action",
+   "params": {
+    "externalSystemId": {
+     "type": "cds.String",
+     "@description": "The ID of the external system that is used for data replication in an integration scenario. When this header is specified, the replication status of the external system will be set to true.",
+     "@openapi.in": "header"
+    },
+    "body": {
+     "type": "Business.Partners_types.postContactSchema",
+     "@openapi.in": "body"
+    }
+   },
+   "@Common.Label": "Contact Management",
+   "@Core.Description": "Creates a contact.",
+   "@Core.LongDescription": "Creates a new contact.<br><br>This operation requires the scope `business-partner-contact_manage`.",
+   "@openapi.path": "/contacts",
+   "returns": {
+    "type": "Business.Partners_types.resourceLocation"
+   }
+  },
+  "Business.Partners.contacts_": {
+   "kind": "function",
+   "params": {
+    "contactNumber": {
+     "type": "cds.String",
+     "@description": "Specific customer number to identify one customer.",
+     "@openapi.in": "path"
+    }
+   },
+   "@Common.Label": "Contact Management",
+   "@Core.Description": "Retrieves a contact.",
+   "@Core.LongDescription": "Retrieves a single contact with a specific identifier.<br><br>This operation requires the scope `business-partner-contact_view`.",
+   "@openapi.path": "/contacts/{contactNumber}",
+   "returns": {
+    "type": "Business.Partners_types.contact"
+   }
+  },
+  "Business.Partners.contacts__put": {
+   "kind": "action",
+   "params": {
+    "contactNumber": {
+     "type": "cds.String",
+     "@description": "Specific customer number to identify one customer.",
+     "@openapi.in": "path"
+    },
+    "externalSystemId": {
+     "type": "cds.String",
+     "@description": "The ID of the external system that is used for data replication in an integration scenario. When this header is specified, the replication status of the external system will be set to true.",
+     "@openapi.in": "header"
+    },
+    "body": {
+     "type": "Business.Partners_types.postContactSchema",
+     "@openapi.in": "body"
+    }
+   },
+   "@Common.Label": "Contact Management",
+   "@Core.Description": "Updates a contact.",
+   "@Core.LongDescription": "Updates a single contact with a specific identifier.<br><br>This operation requires the scope `business-partner-contact_manage`.",
+   "@openapi.method": "PUT",
+   "@openapi.path": "/contacts/{contactNumber}"
+  },
+  "Business.Partners.contacts__externalObjectReferences": {
+   "kind": "function",
+   "params": {
+    "contactNumber": {
+     "type": "cds.String",
+     "@description": "Specific customer number to identify one customer.",
+     "@openapi.in": "path"
+    }
+   },
+   "@Common.Label": "Contact Management",
+   "@Core.Description": "Retrieve external object references for a contact.",
+   "@Core.LongDescription": "Retrieves the external object references for a single contact with a specific identifier.<br><br>This operation requires the scope `business-partner-contact_view`.",
+   "@openapi.path": "/contacts/{contactNumber}/externalObjectReferences",
+   "returns": {
+    "type": "Business.Partners_types.getExternalIdSchema"
+   }
+  },
+  "Business.Partners.contacts__externalObjectReferences_put": {
+   "kind": "action",
+   "params": {
+    "contactNumber": {
+     "type": "cds.String",
+     "@description": "Specific customer number to identify one customer.",
+     "@openapi.in": "path"
+    },
+    "externalSystemId": {
+     "type": "cds.String",
+     "@description": "The ID of the external system that is used for data replication in an integration scenario. When this header is specified, the replication status of the external system will be set to true.",
+     "@openapi.in": "header"
+    },
+    "body": {
+     "type": "Business.Partners_types.externalIdsSchema",
+     "@openapi.in": "body"
+    }
+   },
+   "@Common.Label": "Contact Management",
+   "@Core.Description": "Updates external object references for a contact.",
+   "@Core.LongDescription": "Updates the external object references for a single contact with a specific identifier.<br>Before you use this operation, check the [API Guide](https://help.sap.com/viewer/987aec876092428f88162e438acf80d6/latest/en-US/ac792f993e314ea18dd75b4a99f61a48.html) for important information.<br><br>This operation requires the scope `business-partner-contact_manage`.",
+   "@openapi.method": "PUT",
+   "@openapi.path": "/contacts/{contactNumber}/externalObjectReferences"
+  },
+  "Business.Partners.relationships_customer_contacts": {
+   "kind": "function",
+   "params": {
+    "notReplicatedWithExternalSystemId": {
+     "type": "cds.String",
+     "@description": "This query parameter is used to fetch customer-contact relationship data that was not replicated. If this parameter is specified, the query parameter `q` will have no effect on the returned results.",
+     "@openapi.in": "query"
+    },
+    "pageNumber": {
+     "type": "cds.Integer",
+     "@description": "The page number to be retrieved where the size of the pages must be specified by the pageSize parameter. The number of the first page is 1.",
+     "@openapi.in": "query"
+    },
+    "pageSize": {
+     "type": "cds.Integer",
+     "default": {
+      "val": 10
+     },
+     "@description": "The number of records retrieved at one time.",
+     "@openapi.in": "query"
+    },
+    "sort": {
+     "type": "cds.String",
+     "@description": "The list of comma-separated properties used to sort the results.\nBy default, the column values are sorted in ascending order. \nCan either be in the form of `fieldName`, `fieldName:asc`, or `fieldName:desc`.",
+     "@openapi.in": "query"
+    },
+    "q": {
+     "type": "cds.String",
+     "@description": "The simple query criteria based on available fields to limit returned results or a set of modified documents. A query string contains single or multiple key words. If multiple key words are used, use a space to separate key words. The wildcard (*) is supported to represent one or more characters. If the query parameter q is not specified, only the latest 10 items created will be returned.If you want to search for a value that includes spaces, use '~~' to represent the spaces.Currently, we support the query formats below. Please use these formats to build your query string.\nAvailable formats are:\n\n- `OR` - firstName:Mark company:*ngom* lastName:*ab*\n- `AND` - createdAt>2017-06-14T09:07:15.096Z AND customerType:INDIVIDUAL AND externalObjectReferences.externalId!:1\n- `OR & AND` - (firstName:Mark company:*ngom* lastName:*a~~b*) AND createdAt>2017-06-14T09:07:15.096Z AND externalObjectReferences.externalId!:1\n\nThe following query key words are supported:\n\n- customerNumber\n- contactNumber\n- phone\n- email\n- createdAt\n- changedAt\n- createdBy\n- changedBy\n\nThe value for createdAt and changedAt must be a UTC date and time in ISO 8601 format, such as: `yyyy-MM-dd'T'HH:mm:ss.SSSZ`.",
+     "@openapi.in": "query"
+    },
+    "_count": {
+     "type": "cds.Boolean",
+     "default": {
+      "val": false
+     },
+     "@description": "If `false`, the response headers `x-count` and `x-pagecount` will not be returned. The recommended setting is `false` if not otherwise required by a special use case, as this results in a significantly faster response time.",
+     "@openapi.in": "query",
+     "@openapi.name": "$count"
+    }
+   },
+   "@Common.Label": "Relationship Management",
+   "@Core.Description": "Retrieve relationships between customers and contacts.",
+   "@Core.LongDescription": "Retrieves a collection of customer-contact relationships.<br><br>This operation requires the scope `business-partner-customer_view`.",
+   "@openapi.path": "/relationships/customer-contacts",
+   "returns": {
+    "type": "Business.Partners_types.getCustomerContactRelationshipsSchema"
+   }
+  },
+  "Business.Partners.relationships_customer_contacts_": {
+   "kind": "function",
+   "params": {
+    "customerNumber": {
+     "type": "cds.String",
+     "@description": "Specific customer number to identify one customer.",
+     "@openapi.in": "path"
+    }
+   },
+   "@Common.Label": "Relationship Management",
+   "@Core.Description": "Retrieve customer-contact relationships for a customer.",
+   "@Core.LongDescription": "Retrieves a collection of customer-contact relationships for the given customer.<br><br>This operation requires the scope `business-partner-customer_view`.",
+   "@openapi.path": "/relationships/customer-contacts/{customerNumber}",
+   "returns": {
+    "type": "Business.Partners_types.getCustomerContactRelationshipsSchemabyCustomerNumber"
+   }
+  },
+  "Business.Partners.relationships_customer_contacts___put": {
+   "kind": "action",
+   "params": {
+    "customerNumber": {
+     "type": "cds.String",
+     "@description": "Specific customer number to identify one customer.",
+     "@openapi.in": "path"
+    },
+    "contactNumber": {
+     "type": "cds.String",
+     "@description": "Specific customer number to identify one customer.",
+     "@openapi.in": "path"
+    },
+    "externalSystemId": {
+     "type": "cds.String",
+     "@description": "The ID of the external system that is used for data replication in an integration scenario. When this header is specified, the replication status of the external system will be set to true.",
+     "@openapi.in": "header"
+    },
+    "body": {
+     "type": "Business.Partners_types.putOneCustomerContactRelationship",
+     "@openapi.in": "body"
+    }
+   },
+   "@Common.Label": "Relationship Management",
+   "@Core.Description": "Creates or updates the customer-contact relationship.",
+   "@Core.LongDescription": "Creates or updates the relationship between a customer and a contact with specified IDs.<br><br>This operation requires the scope `business-partner-customer_manage`.",
+   "@openapi.method": "PUT",
+   "@openapi.path": "/relationships/customer-contacts/{customerNumber}/{contactNumber}"
+  },
+  "Business.Partners.relationships_customer_contacts___delete": {
+   "kind": "action",
+   "params": {
+    "customerNumber": {
+     "type": "cds.String",
+     "@description": "Specific customer number to identify one customer.",
+     "@openapi.in": "path"
+    },
+    "contactNumber": {
+     "type": "cds.String",
+     "@description": "Specific customer number to identify one customer.",
+     "@openapi.in": "path"
+    },
+    "externalSystemId": {
+     "type": "cds.String",
+     "@description": "The ID of the external system that is used for data replication in an integration scenario. When this header is specified, the replication status of the external system will be set to true.",
+     "@openapi.in": "header"
+    }
+   },
+   "@Common.Label": "Relationship Management",
+   "@Core.Description": "Deletes the customer-contact relationship.",
+   "@Core.LongDescription": "Deletes the relationship between a customer and a contact with specified IDs.<br><br>This operation requires the scope `business-partner-customer_manage`.",
+   "@openapi.method": "DELETE",
+   "@openapi.path": "/relationships/customer-contacts/{customerNumber}/{contactNumber}"
+  },
+  "Business.Partners.relationships_customer_contacts___state_post": {
+   "kind": "action",
+   "params": {
+    "customerNumber": {
+     "type": "cds.String",
+     "@description": "Specific customer number to identify one customer.",
+     "@openapi.in": "path"
+    },
+    "contactNumber": {
+     "type": "cds.String",
+     "@description": "Specific customer number to identify one customer.",
+     "@openapi.in": "path"
+    },
+    "externalSystemId": {
+     "type": "cds.String",
+     "@description": "The ID of the external system that is used for data replication in an integration scenario. When this header is specified, the replication status of the external system will be set to true.",
+     "@openapi.in": "header"
+    },
+    "body": {
+     "type": "Business.Partners_types.postOneCustomerContactRelationshipDefault",
+     "@openapi.in": "body"
+    }
+   },
+   "@Common.Label": "Relationship Management",
+   "@Core.Description": "Assigns the default customer-contact relationship.",
+   "@Core.LongDescription": "Assigns the default relationship between a customer and a contact.<br><br>This operation requires the scope `business-partner-customer_manage`.",
+   "@openapi.path": "/relationships/customer-contacts/{customerNumber}/{contactNumber}/state"
+  },
+  "Business.Partners.relationships_customer_contacts_replicationConfirmation_post": {
+   "kind": "action",
+   "params": {
+    "externalSystemId": {
+     "type": "cds.String",
+     "@description": "The ID of the external system that is used for data replication in an integration scenario. When this header is specified, the replication status of the external system will be set to true.",
+     "@openapi.in": "header"
+    },
+    "body": {
+     "type": "Business.Partners_types.postBPRelationSchemaCustomerContactsReplicationConfirmation",
+     "@openapi.in": "body"
+    }
+   },
+   "@Common.Label": "Relationship Management",
+   "@Core.Description": "Confirms replication of the customer-contact relationship.",
+   "@Core.LongDescription": "Confirms that the customer-contact relationship was replicated.<br><br>This operation requires the scope `business-partner-customer_manage`.",
+   "@openapi.path": "/relationships/customer-contacts/replicationConfirmation"
+  },
+  "Business.Partners.mdi_replication_reports": {
+   "kind": "function",
+   "params": {
+    "pageNumber": {
+     "type": "cds.Integer",
+     "@description": "The page number to be retrieved where the size of the pages must be specified by the pageSize parameter. The number of the first page is 1.",
+     "@openapi.in": "query"
+    },
+    "pageSize": {
+     "type": "cds.Integer",
+     "default": {
+      "val": 10
+     },
+     "@description": "The number of records retrieved at one time.",
+     "@openapi.in": "query"
+    },
+    "replicationStatus": {
+     "type": "cds.String",
+     "@description": "Filter SAP Master Data Integration replication reports by replication status: `NOT_STARTED`, `FAILURE`, `SKIPPED`, or `SUCCESS`.",
+     "@openapi.in": "query"
+    },
+    "mdiId": {
+     "type": "cds.String",
+     "@description": "Filter SAP Master Data Integration replication reports by SAP Master Data Integration instance identifier.",
+     "@openapi.in": "query"
+    },
+    "customerNumber": {
+     "type": "cds.String",
+     "@description": "Filter SAP Master Data Integration replication reports by SAP Subscription Billing customer number.",
+     "@openapi.in": "query"
+    },
+    "_count": {
+     "type": "cds.Boolean",
+     "default": {
+      "val": false
+     },
+     "@description": "If `false`, the response headers `x-count` and `x-pagecount` will not be returned. The recommended setting is `false` if not otherwise required by a special use case, as this results in a significantly faster response time.",
+     "@openapi.in": "query",
+     "@openapi.name": "$count"
+    }
+   },
+   "@Common.Label": "Replication Monitoring",
+   "@Core.Description": "Retrieves SAP Master Data Integration business partner replication reports.",
+   "@Core.LongDescription": "Retrieves a collection of SAP Master Data Integration replication reports that match the search criteria.<br><br>This operation requires the scope `business-partner-mdi-replication-report_view`.",
+   "@openapi.path": "/mdi/replication-reports",
+   "returns": {
+    "type": "Business.Partners_types.mdiReplicationReports"
+   }
+  },
+  "Business.Partners_types.customer": {
+   "elements": {
+    "customerNumber": {
+     "type": "cds.String"
+    },
+    "mdiId": {
+     "@description": "The identifier of the business partner instance in SAP Master Data Integration if this customer is replicated from SAP Master Data Integration.",
+     "type": "cds.String"
+    },
+    "personalInfo": {
+     "@description": "Mandatory fields for an individual customer that will be ignored when a corporate customer is created.",
+     "elements": {
+      "firstName": {
+       "@description": "First name of an individual customer.",
+       "type": "cds.String"
+      },
+      "lastName": {
+       "@description": "Last name of an individual customer. Mandatory field for personal information.",
+       "type": "cds.String"
+      }
+     }
+    },
+    "corporateInfo": {
+     "@description": "Mandatory fields for a corporate customer that will be ignored when an individual customer is created.",
+     "elements": {
+      "company": {
+       "@description": "Company name of the corporate customer.",
+       "type": "cds.String"
+      }
+     }
+    },
+    "customerType": {
+     "type": "cds.String",
+     "@assert.range": true,
+     "enum": {
+      "INDIVIDUAL": {},
+      "CORPORATE": {}
+     }
+    },
+    "externalObjectReferences": {
+     "items": {
+      "type": "Business.Partners.anonymous.type0"
+     }
+    },
+    "customReferences": {
+     "items": {
+      "elements": {
+       "typeCode": {
+        "@description": "The code representing the type of the reference.",
+        "type": "cds.String"
+       },
+       "id": {
+        "@description": "The identifier of the reference.",
+        "type": "cds.String",
+        "length": 255
+       }
+      }
+     }
+    },
+    "createdBy": {
+     "@description": "The user that created the customer.",
+     "type": "cds.String"
+    },
+    "changedBy": {
+     "@description": "The user that changed the customer.",
+     "type": "cds.String"
+    },
+    "createdAt": {
+     "@description": "The date and time the customer was created.",
+     "type": "cds.Timestamp"
+    },
+    "changedAt": {
+     "@description": "The date and time the customer was changed.",
+     "type": "cds.Timestamp"
+    },
+    "addresses": {
+     "@description": "The list of customer addresses. Currently, only one address is supported.",
+     "items": {
+      "type": "Business.Partners.anonymous.type1"
+     }
+    },
+    "markets": {
+     "@description": "The list of the markets assigned to a customer.",
+     "items": {
+      "type": "Business.Partners.anonymous.type2"
+     }
+    }
+   },
+   "kind": "type"
+  },
+  "Business.Partners_types.customers": {
+   "items": {
+    "type": "Business.Partners_types.customer"
+   },
+   "kind": "type"
+  },
+  "Business.Partners_types.contact": {
+   "@description": "Single contact",
+   "elements": {
+    "contactNumber": {
+     "@description": "The unique identifier of a contact.",
+     "type": "cds.String"
+    },
+    "personalInfo": {
+     "@description": "Personal information of a contact.",
+     "elements": {
+      "firstName": {
+       "@description": "First name of a contact.",
+       "type": "cds.String",
+       "length": 50
+      },
+      "lastName": {
+       "@description": "Last name of a contact. Mandatory field for personal information.",
+       "type": "cds.String",
+       "length": 50
+      }
+     }
+    },
+    "externalObjectReferences": {
+     "items": {
+      "type": "Business.Partners.anonymous.type3"
+     }
+    },
+    "createdBy": {
+     "@description": "The user that created the contact.",
+     "type": "cds.String"
+    },
+    "changedBy": {
+     "@description": "The user that changed the contact.",
+     "type": "cds.String"
+    },
+    "createdAt": {
+     "@description": "The date and time the contact was created.",
+     "type": "cds.Timestamp"
+    },
+    "changedAt": {
+     "@description": "The date and time the contact was changed.",
+     "type": "cds.Timestamp"
+    }
+   },
+   "kind": "type"
+  },
+  "Business.Partners_types.contacts": {
+   "items": {
+    "type": "Business.Partners_types.contact"
+   },
+   "kind": "type"
+  },
+  "Business.Partners_types.postCustomerSchema": {
+   "elements": {
+    "customerNumber": {
+     "@description": "The identifying number assigned to this customer. If the field is empty, a random number will be generated. If the field contains digits only, the leading zero will be removed.",
+     "type": "cds.String",
+     "length": 10
+    },
+    "mdiId": {
+     "@description": "The corresponding SAP Master Data Integration instance identifier associated with this customer. It's immutable once it has been set.",
+     "type": "cds.String",
+     "length": 36
+    },
+    "personalInfo": {
+     "@description": "Mandatory fields for an individual customer that will be ignored when a corporate customer is created.",
+     "elements": {
+      "firstName": {
+       "@description": "First name of the customer.",
+       "type": "cds.String",
+       "length": 50
+      },
+      "lastName": {
+       "@description": "Last name of the customer. Mandatory field for personal information.",
+       "type": "cds.String",
+       "length": 50
+      }
+     }
+    },
+    "corporateInfo": {
+     "@description": "Mandatory fields for a corporate customer that will be ignored when an individual customer is created.",
+     "elements": {
+      "company": {
+       "@description": "Company name of the corporate customer.",
+       "type": "cds.String",
+       "length": 80
+      }
+     }
+    },
+    "customerType": {
+     "type": "cds.String",
+     "@assert.range": true,
+     "enum": {
+      "INDIVIDUAL": {},
+      "CORPORATE": {}
+     }
+    },
+    "externalObjectReferenceListCompleteIndicator": {
+     "@description": "Indicates whether the external object references list is complete. The default value is `false`, meaning that the list should merge with original list.",
+     "type": "cds.Boolean"
+    },
+    "externalObjectReferences": {
+     "items": {
+      "type": "Business.Partners.anonymous.type4"
+     }
+    },
+    "customReferences": {
+     "items": {
+      "elements": {
+       "typeCode": {
+        "@description": "The code representing the type of the reference.",
+        "type": "cds.String"
+       },
+       "id": {
+        "@description": "The identifier of the reference.",
+        "type": "cds.String",
+        "length": 255
+       }
+      }
+     }
+    },
+    "addresses": {
+     "@description": "The list of customer addresses. Currently, only one address is supported. Whether the street, city, state and postalCode fields in the address are mandatory depends on the `AddressSettings` configuration value in Business Configuration for different countries. When the `completenessCheckActivation` value is set to `false`, no specific field is mandatory. When the `completenessCheckActivation` value is set to `true`, then check whether the specific field value for the country / region is true under `countrySpecificSettings`. For example, if the value of street is `true`, the street field is mandatory.",
+     "items": {
+      "type": "Business.Partners.anonymous.type5"
+     }
+    },
+    "markets": {
+     "@description": "The list of the markets assigned to a customer.",
+     "items": {
+      "type": "Business.Partners.anonymous.type6"
+     }
+    }
+   },
+   "kind": "type"
+  },
+  "Business.Partners_types.externalIdsSchema": {
+   "items": {
+    "elements": {
+     "externalSystemType": {
+      "@description": "The type of an external system the customer data is replicated from.",
+      "type": "cds.String"
+     },
+     "externalSystemId": {
+      "@description": "The identifier of an external system the customer data is replicated from.",
+      "type": "cds.String"
+     },
+     "externalIdTypeCode": {
+      "@description": "The code represents the type of the external customer identifier replicated from an external system. The predefined codes are 201: Business Partner Number, 202: ERP Customer Number, 203: ERP Customer Number on Database, 211: Contract Account Number. Customized codes must start with the uppercase letter Z.",
+      "type": "cds.String"
+     },
+     "externalId": {
+      "@description": "The external customer identifier replicated from an external system.",
+      "type": "cds.String"
+     }
+    }
+   },
+   "kind": "type"
+  },
+  "Business.Partners_types.resourceLocation": {
+   "@title": "Resource Location",
+   "@description": "The schema showing the location of the new resource.",
+   "elements": {
+    "id": {
+     "@description": "The identifier of the created resource.",
+     "type": "cds.String"
+    }
+   },
+   "kind": "type"
+  },
+  "Business.Partners_types.errorMessage": {
+   "@title": "error",
+   "@description": "Schema for API specified errors.",
+   "elements": {
+    "status": {
+     "@description": "original HTTP error code, should be consistent with the response HTTP code",
+     "type": "cds.Integer"
+    },
+    "type": {
+     "@description": "classification of the error type, lower case with underscore eg validation_failure",
+     "type": "cds.String"
+    },
+    "message": {
+     "@description": "descriptive error message for debugging",
+     "type": "cds.String"
+    },
+    "details": {
+     "@description": "list of problems causing this error",
+     "items": {
+      "type": "Business.Partners.anonymous.type7"
+     }
+    }
+   },
+   "kind": "type"
+  },
+  "Business.Partners_types.postContactSchema": {
+   "elements": {
+    "contactNumber": {
+     "@description": "The identifying number assigned to this contact. If the field is empty, a random number will be generated. If the field contains digits only, the leading zero will be removed.",
+     "type": "cds.String",
+     "length": 10
+    },
+    "personalInfo": {
+     "@description": "Personal information of a contact.",
+     "elements": {
+      "firstName": {
+       "@description": "First name of the contact.",
+       "type": "cds.String"
+      },
+      "lastName": {
+       "@description": "Last name of the contact. Mandatory field for personal information.",
+       "type": "cds.String"
+      }
+     }
+    },
+    "externalObjectReferenceListCompleteIndicator": {
+     "@description": "Indicates whether the external object references list is complete. The default value is `false`, meaning that the list should merge with the original list.",
+     "type": "cds.Boolean"
+    },
+    "externalObjectReferences": {
+     "items": {
+      "type": "Business.Partners.anonymous.type8"
+     }
+    }
+   },
+   "kind": "type"
+  },
+  "Business.Partners_types.putCustomerSchema": {
+   "elements": {
+    "customerNumber": {
+     "@description": "The identifying number assigned to this customer. If the filed is empty, a random number will be generated.",
+     "type": "cds.String",
+     "length": 10
+    },
+    "mdiId": {
+     "@description": "The corresponding SAP Master Data Integration instance identifier associated with this customer. It's immutable once it has been set.",
+     "type": "cds.String",
+     "length": 36
+    },
+    "personalInfo": {
+     "@description": "Mandatory fields for an individual customer that will be ignored when a corporate customer is created.",
+     "elements": {
+      "firstName": {
+       "@description": "First name of the customer.",
+       "type": "cds.String",
+       "length": 50
+      },
+      "lastName": {
+       "@description": "Last name of the customer. Mandatory field for personal information.",
+       "type": "cds.String",
+       "length": 50
+      }
+     }
+    },
+    "corporateInfo": {
+     "@description": "Mandatory fields for a corporate customer that will be ignored when an individual customer is created.",
+     "elements": {
+      "company": {
+       "@description": "Company name of the corporate customer.",
+       "type": "cds.String",
+       "length": 80
+      }
+     }
+    },
+    "customerType": {
+     "type": "cds.String",
+     "@assert.range": true,
+     "enum": {
+      "INDIVIDUAL": {},
+      "CORPORATE": {}
+     }
+    },
+    "externalObjectReferenceListCompleteIndicator": {
+     "@description": "Indicate whether the external object references list is complete. The default value is false, which means the list should merge with original list.",
+     "type": "cds.Boolean"
+    },
+    "externalObjectReferences": {
+     "items": {
+      "type": "Business.Partners.anonymous.type9"
+     }
+    },
+    "customReferences": {
+     "items": {
+      "elements": {
+       "typeCode": {
+        "@description": "The code representing the type of the reference.",
+        "type": "cds.String"
+       },
+       "id": {
+        "@description": "The identifier of the reference.",
+        "type": "cds.String",
+        "length": 255
+       }
+      }
+     }
+    },
+    "addresses": {
+     "@description": "The list of customer addresses. Currently, only one address is supported. Whether the street, city, state and postalCode fields in the address are mandatory depends on the AddressSettings configuration value in Business Configuration for different countries. When the completenessCheckActivation value is set to false, no specific field is mandatory. When the completenessCheckActivation value is set to true, then check whether the specific field value for the country / region is true under countrySpecificSettings. For example, if the value of street is true, the street field is mandatory.",
+     "items": {
+      "type": "Business.Partners.anonymous.type10"
+     }
+    },
+    "markets": {
+     "@description": "The list of the markets assigned to a customer.",
+     "items": {
+      "type": "Business.Partners.anonymous.type11"
+     }
+    }
+   },
+   "kind": "type"
+  },
+  "Business.Partners_types.postBPRelationSchemaCustomerContactsReplicationConfirmation": {
+   "elements": {
+    "customerNumber": {
+     "@description": "The unique identifier of a customer.",
+     "type": "cds.String"
+    },
+    "contactNumber": {
+     "@description": "The unique identifier of a contact.",
+     "type": "cds.String"
+    },
+    "externalSystemId": {
+     "@description": "The identifier of an external system the customer data is replicated from.",
+     "type": "cds.String"
+    }
+   },
+   "kind": "type"
+  },
+  "Business.Partners_types.getCustomerContactRelationshipsSchema": {
+   "items": {
+    "elements": {
+     "customerNumber": {
+      "@description": "The unique identifier of a customer.",
+      "type": "cds.String"
+     },
+     "contactNumber": {
+      "@description": "The unique identifier of a contact.",
+      "type": "cds.String"
+     },
+     "workplaceAddress": {
+      "@description": "The address of a contact related to the specific customer.",
+      "elements": {
+       "addressUUID": {
+        "@description": "The unique identifier of the address.",
+        "type": "cds.String"
+       },
+       "email": {
+        "@description": "The email address of a contact.",
+        "type": "cds.String",
+        "length": 241
+       },
+       "phone": {
+        "@description": "The phone number of a contact.",
+        "type": "cds.String",
+        "length": 50
+       }
+      }
+     },
+     "createdBy": {
+      "@description": "The user that created the relationship.",
+      "type": "cds.String"
+     },
+     "changedBy": {
+      "@description": "The user that changed the relationship.",
+      "type": "cds.String"
+     },
+     "createdAt": {
+      "@description": "The date and time the relationship was created.",
+      "type": "cds.Timestamp"
+     },
+     "changedAt": {
+      "@description": "The date and time the relationship was changed.",
+      "type": "cds.Timestamp"
+     },
+     "isDefault": {
+      "@description": "The default flag for this relationship.",
+      "type": "cds.Boolean"
+     }
+    }
+   },
+   "kind": "type"
+  },
+  "Business.Partners_types.getCustomerContactRelationshipsSchemabyCustomerNumber": {
+   "items": {
+    "elements": {
+     "contactNumber": {
+      "@description": "The unique identifier of a contact.",
+      "type": "cds.String"
+     },
+     "workplaceAddress": {
+      "@description": "The address of a contact related to the specific customer.",
+      "elements": {
+       "addressUUID": {
+        "@description": "The unique identifier of the address.",
+        "type": "cds.String"
+       },
+       "email": {
+        "@description": "The email address of a contact.",
+        "type": "cds.String",
+        "length": 241
+       },
+       "phone": {
+        "@description": "The phone number of a contact.",
+        "type": "cds.String",
+        "length": 50
+       }
+      }
+     },
+     "createdBy": {
+      "@description": "The user who created the relationship.",
+      "type": "cds.String"
+     },
+     "changedBy": {
+      "@description": "The user who changed the relationship.",
+      "type": "cds.String"
+     },
+     "createdAt": {
+      "@description": "The date and time when the relationship was created.",
+      "type": "cds.Timestamp"
+     },
+     "changedAt": {
+      "@description": "The date and time when the relationship was changed.",
+      "type": "cds.Timestamp"
+     },
+     "isDefault": {
+      "@description": "The default flag for this relationship.",
+      "type": "cds.Boolean"
+     }
+    }
+   },
+   "kind": "type"
+  },
+  "Business.Partners_types.putOneCustomerContactRelationship": {
+   "elements": {
+    "workplaceAddress": {
+     "@description": "The address of a contact related to the specific customer.",
+     "elements": {
+      "addressUUID": {
+       "@description": "The unique identifier of the address. If this field is empty, a random ID is generated when a new relationship is created.",
+       "type": "cds.String"
+      },
+      "email": {
+       "@description": "The email address of a contact.",
+       "type": "cds.String",
+       "length": 241
+      },
+      "phone": {
+       "@description": "The phone number of a contact.",
+       "type": "cds.String",
+       "length": 50
+      }
+     }
+    }
+   },
+   "kind": "type"
+  },
+  "Business.Partners_types.postOneCustomerContactRelationshipDefault": {
+   "elements": {
+    "isDefault": {
+     "@description": "The default property of a contact. Only the value `true` is accepted.",
+     "type": "cds.Boolean"
+    }
+   },
+   "kind": "type"
+  },
+  "Business.Partners_types.getExternalIdSchema": {
+   "items": {
+    "elements": {
+     "externalSystemType": {
+      "@description": "The type of an external system the customer data is replicated from.",
+      "type": "cds.String"
+     },
+     "externalSystemId": {
+      "@description": "The identifier of an external system the customer data is replicated from.",
+      "type": "cds.String"
+     },
+     "externalIdTypeCode": {
+      "@description": "The code represents the type of the external customer identifier replicated from an external system. The predefined codes are 201: Business Partner Number, 202: ERP Customer Number, 203: ERP Customer Number on Database, 211: Contract Account Number. Customized codes must start with the uppercase letter Z.",
+      "type": "cds.String"
+     },
+     "externalId": {
+      "@description": "The external customer identifier replicated from an external system.",
+      "type": "cds.String"
+     }
+    }
+   },
+   "kind": "type"
+  },
+  "Business.Partners_types.mdiReplicationReport": {
+   "elements": {
+    "mdiId": {
+     "@description": "The identifier of the business partner instance in SAP Master Data Integration",
+     "type": "cds.String"
+    },
+    "customerNumber": {
+     "@description": "The Identifier of the Business Partner instance in SAP Subscription Billing",
+     "type": "cds.String"
+    },
+    "changedAt": {
+     "@description": "The date and time the replication event was last changed.",
+     "type": "cds.Timestamp"
+    },
+    "replicationStatus": {
+     "@description": "The replication event status.",
+     "type": "cds.String",
+     "@assert.range": true,
+     "enum": {
+      "NOT_STARTED": {},
+      "FAILURE": {},
+      "SKIPPED": {},
+      "SUCCESS": {}
+     }
+    },
+    "failureReason": {
+     "elements": {
+      "code": {
+       "@description": "The code for the failure reason.",
+       "type": "cds.String"
+      },
+      "message": {
+       "@description": "The detailed error message of the failure reason.",
+       "type": "cds.String"
+      }
+     }
+    }
+   },
+   "kind": "type"
+  },
+  "Business.Partners_types.mdiReplicationReports": {
+   "items": {
+    "type": "Business.Partners_types.mdiReplicationReport"
+   },
+   "kind": "type"
+  },
+  "Business.Partners.anonymous.type0": {
+   "@description": "The customer identifier replicated from an external system. This reference contains the ID and type of the external system, the external ID of the customer, and the ID stored on the database of the external system. \nThe composite key of `externalSystemId` and `externalIdTypeCode` must be unique.",
+   "elements": {
+    "externalSystemId": {
+     "@description": "The identifier of an external system from which the customer data is replicated.",
+     "type": "cds.String"
+    },
+    "externalIdTypeCode": {
+     "@description": "The type of the external customer identifier replicated from an external system. The predefined codes are 201: Business Partner Number, 202: ERP Customer Number, 203: ERP Customer Number on Database, 211: Contract Account Number. Customized codes must start with the uppercase letter Z.",
+     "type": "cds.String"
+    },
+    "externalId": {
+     "@description": "The external customer identifier replicated from an external system.",
+     "type": "cds.String"
+    }
+   },
+   "kind": "type"
+  },
+  "Business.Partners.anonymous.type1": {
+   "@description": "The address of a customer.",
+   "elements": {
+    "addressUUID": {
+     "@description": "The unique identifier of the address.",
+     "type": "cds.String"
+    },
+    "email": {
+     "@description": "The email address.",
+     "type": "cds.String"
+    },
+    "phone": {
+     "@description": "The phone number.",
+     "type": "cds.String"
+    },
+    "street": {
+     "@description": "The street of the address.",
+     "type": "cds.String"
+    },
+    "additionalAddressInfo": {
+     "@description": "Additional information about the address that may provide country-specific details.",
+     "type": "cds.String"
+    },
+    "houseNumber": {
+     "@description": "The house number of the address.",
+     "type": "cds.String"
+    },
+    "city": {
+     "@description": "The city of the address.",
+     "type": "cds.String"
+    },
+    "postalCode": {
+     "@description": "The postal code of the address.",
+     "type": "cds.String"
+    },
+    "state": {
+     "@description": "The state of the address.",
+     "type": "cds.String"
+    },
+    "country": {
+     "@description": "The country / region of the address.",
+     "type": "cds.String"
+    },
+    "isDefault": {
+     "@description": "If true, the address is the default address.",
+     "type": "cds.Boolean"
+    }
+   },
+   "kind": "type"
+  },
+  "Business.Partners.anonymous.type2": {
+   "@description": "The market assigned to a customer.",
+   "elements": {
+    "marketId": {
+     "@description": "The market ID.",
+     "type": "cds.String"
+    },
+    "currency": {
+     "@description": "The currency of a market.",
+     "type": "cds.String"
+    },
+    "country": {
+     "@description": "The country / region of a market.",
+     "type": "cds.String"
+    },
+    "salesArea": {
+     "@description": "The sales area information of a market.",
+     "elements": {
+      "salesOrganization": {
+       "@description": "The sales organization of a market.",
+       "type": "cds.String",
+       "length": 4
+      },
+      "distributionChannel": {
+       "@description": "The distribution channel of a market.",
+       "type": "cds.String",
+       "length": 2
+      },
+      "division": {
+       "@description": "The division of a market.",
+       "type": "cds.String",
+       "length": 2
+      }
+     }
+    },
+    "active": {
+     "@description": "If true, this market is active.",
+     "type": "cds.Boolean"
+    },
+    "priceInfo": {
+     "@description": "<b>Note:</b> These fields are currently not used.<br/>The market price information from an external system.",
+     "elements": {
+      "priceGroup": {
+       "@description": "The price group from an external system. The price group is a group of customers who share the same pricing requirements.",
+       "type": "cds.String"
+      },
+      "priceListType": {
+       "@description": "The price list type from an external system. The price list type defines the type and characteristics of a price list.",
+       "type": "cds.String"
+      },
+      "incoterms": {
+       "@description": "The market incoterms from an external system. Incoterms are a codification for commonly-used trading terms.",
+       "type": "cds.String"
+      },
+      "incotermsLocation": {
+       "@description": "Additional incoterms information regarding the location.",
+       "type": "cds.String"
+      }
+     }
+    }
+   },
+   "kind": "type"
+  },
+  "Business.Partners.anonymous.type3": {
+   "@description": "The contact identifier replicated from an external system. This reference contains the ID and type of the external system, the external ID of the customer, and the ID stored on the database of the external system. \nThe composite key of `externalSystemId` and `externalIdTypeCode` must be unique.",
+   "elements": {
+    "externalSystemId": {
+     "@description": "The identifier of an external system from which the customer data is replicated.",
+     "type": "cds.String"
+    },
+    "externalIdTypeCode": {
+     "@description": "The type of the external customer identifier replicated from an external system. The predefined codes are 201: Business Partner Number, 202: ERP Customer Number, 203: ERP Customer Number on Database, 211: Contract Account Number. Customized codes must start with the uppercase letter Z.",
+     "type": "cds.String"
+    },
+    "externalId": {
+     "@description": "The external customer identifier replicated from an external system.",
+     "type": "cds.String"
+    }
+   },
+   "kind": "type"
+  },
+  "Business.Partners.anonymous.type4": {
+   "@description": "The customer identifier replicated from an external system. This reference contains the ID and type of the external system, the external ID of the customer, and the ID stored on the database of the external system. \nThe composite key of `externalSystemId` and `externalIdTypeCode` must be unique.",
+   "elements": {
+    "externalSystemId": {
+     "@description": "The identifier of an external system from which the customer data is replicated.",
+     "type": "cds.String"
+    },
+    "externalIdTypeCode": {
+     "@description": "The type of external customer identifier replicated from an external system. The predefined codes are 201: Business Partner Number, 202: ERP Customer Number, 203: ERP Customer Number on Database, 211: Contract Account Number. Customized codes must start with the uppercase letter Z.",
+     "type": "cds.String"
+    },
+    "externalId": {
+     "@description": "The external customer identifier replicated from an external system.",
+     "type": "cds.String"
+    }
+   },
+   "kind": "type"
+  },
+  "Business.Partners.anonymous.type5": {
+   "@description": "The address of a customer.",
+   "elements": {
+    "addressUUID": {
+     "@description": "The unique identifier of the address. If this field is empty, a random ID is generated.",
+     "type": "cds.String"
+    },
+    "email": {
+     "@description": "The email address.",
+     "type": "cds.String",
+     "length": 241
+    },
+    "phone": {
+     "@description": "The phone number.",
+     "type": "cds.String",
+     "length": 50
+    },
+    "street": {
+     "@description": "The street of the address.",
+     "type": "cds.String",
+     "length": 200
+    },
+    "additionalAddressInfo": {
+     "@description": "Additional information about the address that may provide country-specific details.",
+     "type": "cds.String",
+     "length": 200
+    },
+    "houseNumber": {
+     "@description": "The house number of the address.",
+     "type": "cds.String",
+     "length": 50
+    },
+    "city": {
+     "@description": "The city of the address.",
+     "type": "cds.String",
+     "length": 200
+    },
+    "postalCode": {
+     "@description": "The postal code of the address.",
+     "type": "cds.String",
+     "length": 20
+    },
+    "state": {
+     "@description": "The state of the address.",
+     "type": "cds.String",
+     "length": 20
+    },
+    "country": {
+     "@description": "The country / region of the address.",
+     "type": "cds.String",
+     "length": 50
+    },
+    "isDefault": {
+     "@description": "If true, this address is the default address.",
+     "type": "cds.Boolean"
+    }
+   },
+   "kind": "type"
+  },
+  "Business.Partners.anonymous.type6": {
+   "@description": "The market assigned to a customer.",
+   "elements": {
+    "marketId": {
+     "@description": "The identifier of the market assigned to a customer.",
+     "type": "cds.String"
+    },
+    "salesArea": {
+     "@description": "The sales area information of the market that should be matched to one of the markets defined within the business configuration. If a matched market cannot be found, just ignore this salesArea.",
+     "elements": {
+      "salesOrganization": {
+       "@description": "The sales organization of a market.",
+       "type": "cds.String",
+       "length": 4
+      },
+      "distributionChannel": {
+       "@description": "The distribution channel of a market.",
+       "type": "cds.String",
+       "length": 2
+      },
+      "division": {
+       "@description": "The division of a market.",
+       "type": "cds.String",
+       "length": 2
+      }
+     }
+    },
+    "active": {
+     "@description": "If true, the market is active.",
+     "type": "cds.Boolean"
+    }
+   },
+   "kind": "type"
+  },
+  "Business.Partners.anonymous.type7": {
+   "@description": "schema for specific error cause",
+   "elements": {
+    "field": {
+     "@description": "a bean notation expression specifying the element in request data causing the error, eg product.variants[3].name, this can be empty if violation was not field specific",
+     "type": "cds.String"
+    },
+    "type": {
+     "@description": "classification of the error detail type, lower case with underscore eg missing_value, this value must be always interpreted in context of the general error type.",
+     "type": "cds.String"
+    },
+    "message": {
+     "@description": "descriptive error detail message for debugging",
+     "type": "cds.String"
+    }
+   },
+   "kind": "type"
+  },
+  "Business.Partners.anonymous.type8": {
+   "@description": "The contact identifier replicated from an external system. This reference contains the ID and type of the external system, the external ID of the customer, and the ID stored on the database of the external system. \nThe composite key of `externalSystemId` and `externalIdTypeCode` must be unique.",
+   "elements": {
+    "externalSystemId": {
+     "@description": "The identifier of an external system from which the customer data is replicated.",
+     "type": "cds.String"
+    },
+    "externalIdTypeCode": {
+     "@description": "The type of external customer identifier replicated from an external system. The predefined codes are 201: Business Partner Number, 202: ERP Customer Number, 203: ERP Customer Number on Database, 211: Contract Account Number. Customized codes must start with the uppercase letter Z.",
+     "type": "cds.String"
+    },
+    "externalId": {
+     "@description": "The external customer identifier replicated from an external system.",
+     "type": "cds.String"
+    }
+   },
+   "kind": "type"
+  },
+  "Business.Partners.anonymous.type9": {
+   "@description": "The customer identifier replicated from an external system. This reference contains the ID and type of the external system, the external ID of the customer, and the ID stored on the database of the external system.",
+   "elements": {
+    "externalSystemId": {
+     "@description": "The identifier of an external system the customer data is replicated from.",
+     "type": "cds.String"
+    },
+    "externalIdTypeCode": {
+     "@description": "The code representing the type of the external customer identifier replicated from an external system. The predefined codes are 201: Business Partner Number, 202: ERP Customer Number, 203: ERP Customer Number on Database. Customized codes must start with the uppercase letter Z.",
+     "type": "cds.String"
+    },
+    "externalId": {
+     "@description": "The external customer identifier replicated from an external system.",
+     "type": "cds.String"
+    }
+   },
+   "kind": "type"
+  },
+  "Business.Partners.anonymous.type10": {
+   "@description": "The address of a customer.",
+   "elements": {
+    "addressUUID": {
+     "@description": "The unique identifier of the address. If this field is empty, the ID of the default address is assigned.",
+     "type": "cds.String"
+    },
+    "email": {
+     "@description": "The email address.",
+     "type": "cds.String",
+     "length": 241
+    },
+    "phone": {
+     "@description": "The phone number.",
+     "type": "cds.String",
+     "length": 50
+    },
+    "street": {
+     "@description": "The street of the address.",
+     "type": "cds.String",
+     "length": 200
+    },
+    "additionalAddressInfo": {
+     "@description": "Additional information about the address that may provide country-specific details.",
+     "type": "cds.String",
+     "length": 200
+    },
+    "houseNumber": {
+     "@description": "The house number of the address.",
+     "type": "cds.String",
+     "length": 50
+    },
+    "city": {
+     "@description": "The city of the address.",
+     "type": "cds.String",
+     "length": 200
+    },
+    "postalCode": {
+     "@description": "The postal code of the address.",
+     "type": "cds.String",
+     "length": 20
+    },
+    "state": {
+     "@description": "The state of the address.",
+     "type": "cds.String",
+     "length": 20
+    },
+    "country": {
+     "@description": "The country / region of the address.",
+     "type": "cds.String",
+     "length": 50
+    },
+    "isDefault": {
+     "@description": "If true, this address is the default address.",
+     "type": "cds.Boolean"
+    }
+   },
+   "kind": "type"
+  },
+  "Business.Partners.anonymous.type11": {
+   "@description": "The market assigned to a customer.",
+   "elements": {
+    "marketId": {
+     "@description": "The identifier of the market assigned to a customer.",
+     "type": "cds.String"
+    },
+    "salesArea": {
+     "@description": "The sales area information of the market that should be matched to one of the markets defined within the business configuration. If a matched market cannot be found, just ignore this salesArea.",
+     "elements": {
+      "salesOrganization": {
+       "@description": "The sales organization of a market.",
+       "type": "cds.String",
+       "length": 4
+      },
+      "distributionChannel": {
+       "@description": "The distribution channel of a market.",
+       "type": "cds.String",
+       "length": 2
+      },
+      "division": {
+       "@description": "The division of a market.",
+       "type": "cds.String",
+       "length": 2
+      }
+     }
+    },
+    "active": {
+     "@description": "If true, the market is active.",
+     "type": "cds.Boolean"
+    }
+   },
+   "kind": "type"
+  }
+ },
+ "meta": {
+  "creator": "cds-import-openapi"
+ }
+}

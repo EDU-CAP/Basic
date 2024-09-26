@@ -84,3 +84,25 @@ Content-Type: application/json
 DELETE {{server}}/odata/v4/bookshop/Authors/18349758-6fbd-42da-8755-f9a5a4af265e
 Content-Type: application/json
 {{auth}}
+
+### getCustomers
+# @name getCustomers_Get
+GET {{server}}/odata/v4/bookshop/getCustomers
+Content-Type: application/json
+{{auth}}
+
+### BookshopOrders
+# @name BookshopOrders_Get
+GET {{server}}/odata/v4/bookshop/BookshopOrders
+Content-Type: application/json
+{{auth}}
+
+
+### testExternalService
+# @name testExternalService_POST
+POST {{server}}/odata/v4/bookshop/testExternalService
+Content-Type: application/json
+{{auth}}
+
+{
+}

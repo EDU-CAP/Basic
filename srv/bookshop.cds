@@ -1,6 +1,18 @@
-using edu03 from '../db/schema';
+using edu03 from '../db/schema';  
+using { Business.Partners_types as BusinessPartnerType } from './external/BusinessPartner_APIs';  
+using { northwind.Orders as northwindOrders } from './external/northwind';
+  
+service BookshopService @(requires: 'authenticated-user') {  
+    entity Books   as projection on edu03.Books;  
+    entity Authors as projection on edu03.Authors;  
+    entity BookshopOrders as projection on northwindOrders;
+      
+    action testExternalService();  
+     
+    function getCustomers() returns BusinessPartnerType.customers;  
 
-service BookshopService @(requires: 'authenticated-user') {
-    entity Books   as projection on edu03.Books;
-    entity Authors as projection on edu03.Authors;
+    event receiveEvent : {  
+        eventid : String(50);  
+        message : String;  
+    }  
 }

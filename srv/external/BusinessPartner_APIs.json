@@ -1,0 +1,4257 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "Business Partners",
+    "description" : "Enables you to create and manage business partner data, including customer data, contact data, and customer-contact relationships.",
+    "version" : "3"
+  },
+  "x-sap-extensible": {
+    "supported": "automatic",
+    "description": "The API can be extended by using custom references. For more information, refer to [Custom References](https://help.sap.com/docs/CLOUD_TO_CASH_OD/e4aa21cd43494cc1a8a90ea0f3dab8bb/1a8601ce8db44b2b8e29012d385892ca.html#custom-references) on the SAP Help Portal."
+  },
+  "externalDocs" : {
+    "description" : "API Guide",
+    "url" : "https://help.sap.com/viewer/987aec876092428f88162e438acf80d6/latest/en-US/be93b803f0df4416879667734910db86.html"
+  },
+  "servers" : [ {
+    "url" : "https://sandbox.api.sap.com/subscriptionbilling/api/business-partner/v3"
+  }, {
+    "url" : "https://{region}.revenue.cloud.sap/api/business-partner/v3",
+    "description" : "SAP Subscription Billing API Endpoint",
+    "variables" : {
+      "region" : {
+        "description" : "SAP Subscription Billing Region",
+        "enum" : [ "eu10", "us10" ],
+        "default" : "eu10"
+      }
+    }
+  } ],
+  "security" : [ {
+    "oauth2" : [ "{identityzone}.business-partner-customer_manage", "{identityzone}.business-partner-customer_view", "{identityzone}.business-partner-customer_delete", "{identityzone}.business-partner-contact_manage", "{identityzone}.business-partner-contact_view", "{identityzone}.business-partner-mdi-replication-report_view" ]
+  } ],
+  "tags" : [ {
+    "name" : "Customer Management",
+    "description" : "Manage customer data."
+  }, {
+    "name" : "Contact Management",
+    "description" : "Manage contact data."
+  }, {
+    "name" : "Relationship Management",
+    "description" : "Manage customer-contact relationship data."
+  }, {
+    "name" : "Replication Monitoring",
+    "description" : "Monitor SAP Master Data Integration Replication."
+  } ],
+  "paths" : {
+    "/customers" : {
+      "get" : {
+        "tags" : [ "Customer Management" ],
+        "summary" : "Retrieves customers.",
+        "description" : "Retrieves a collection of customers that match the search criteria.<br><br>This operation requires the scope `business-partner-customer_view`.",
+        "operationId" : "GET_customers",
+        "parameters" : [ {
+          "name" : "notReplicatedWithExternalSystemId",
+          "in" : "query",
+          "description" : "This query parameter is used to fetch customer data that was not replicated. If this parameter is specified, the query parameter `q` will have no effect on the returned results.",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "pageNumber",
+          "in" : "query",
+          "description" : "The page number to be retrieved where the size of the pages must be specified by the pageSize parameter. The number of the first page is 1.",
+          "schema" : {
+            "minimum" : 1,
+            "type" : "integer"
+          }
+        }, {
+          "name" : "pageSize",
+          "in" : "query",
+          "description" : "The number of records retrieved at one time.",
+          "schema" : {
+            "maximum" : 1000,
+            "minimum" : 1,
+            "type" : "integer",
+            "default" : 10
+          }
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "description" : "The list of comma-separated properties used to sort the results.\nBy default, the column values are sorted in ascending order. \nCan either be in the form of `fieldName`, `fieldName:asc`, or `fieldName:desc`.",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "expand",
+          "in" : "query",
+          "description" : "Controls which elements of a customer are expanded (included) in the returned customer.\nAvailable elements are:\n    \n- `markets` - includes markets information.\n- `addresses` - includes all customer addresses.\n- `defaultAddress` - includes the default address as defaultAddress property.\n- `customReferences` - includes custom references information.\n- `all` - includes all markets, addresses, defaultAddress information.\n\nThe elements can be combined by separating them with a comma.",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "q",
+          "in" : "query",
+          "description" : "The simple query criteria based on available fields to limit returned results or a set of modified documents. A query string contains single or multiple key words. If multiple key words are used, use a space to separate key words. The wildcard (*) is supported to represent one or more characters. If the query parameter q is not specified, only the latest 10 items created will be returned.If you want to search for a value that includes spaces, use '~~' to represent the spaces.Currently, we support the query formats below. Please use these formats to build your query string.\nAvailable formats are:\n\n- `OR` - firstName:Mark company:*ngom* lastName:*ab*\n- `AND` - createdAt>2017-06-14T09:07:15.096Z AND customerType:INDIVIDUAL AND externalObjectReferences.externalId!:1\n- `OR & AND` - (firstName:Mark company:*ngom* lastName:*a~~b*) AND createdAt>2017-06-14T09:07:15.096Z AND externalObjectReferences.externalId!:1\n\nThe following query key words are supported:\n\n- customerNumber\n- mdiId\n- customerType\n- firstName\n- lastName\n- company\n- name\n- createdAt\n- changedAt\n- createdBy\n- changedBy\n- externalObjectReferences.externalSystemId\n- externalObjectReferences.externalId\n- externalObjectReferences.externalIdTypeCode\n- markets.marketId\n- markets.active\n- customReferences.typeCode\n- customReferences.id\n- addresses.email\n- addresses.phone\n- addresses.street\n- addresses.houseNumber\n- addresses.city\n- addresses.state\n- addresses.postalCode\n- addresses.country\n- addresses.isDefault\n\nThe value for createdAt and changedAt must be a UTC date and time in ISO 8601 format, such as: `yyyy-MM-dd'T'HH:mm:ss.SSSZ`.",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "$count",
+          "in" : "query",
+          "description" : "If `false`, the response headers `x-count` and `x-pagecount` will not be returned. The recommended setting is `false` if not otherwise required by a special use case, as this results in a significantly faster response time.",
+          "schema" : {
+            "type" : "boolean",
+            "format" : "boolean",
+            "default" : true
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Customers retrieved successfully.",
+            "headers" : {
+              "x-count" : {
+                "description" : "The total number of elements that fulfill the criteria.",
+                "schema" : {
+                  "type" : "integer"
+                }
+              },
+              "x-pagecount" : {
+                "description" : "The total number of pages that fulfill the criteria.",
+                "schema" : {
+                  "type" : "integer"
+                }
+              },
+              "hybris-count" : {
+                "description" : "Total number of results available.",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/customers"
+                },
+                "example" : [ {
+                  "customerNumber" : "5135116903",
+                  "mdiId" : "506b4bc3-45fc-1eeb-bc85-9d1d216aa8de",
+                  "customerType" : "INDIVIDUAL",
+                  "personalInfo" : {
+                    "firstName" : "Android",
+                    "lastName" : "Lee"
+                  },
+                  "corporateInfo" : { },
+                  "externalObjectReferences" : [ {
+                    "externalSystemId" : "test",
+                    "externalIdTypeCode" : "201",
+                    "externalId" : "123456789"
+                  } ],
+                  "customReferences" : [ {
+                    "typeCode" : "CID",
+                    "id" : "23917228"
+                  }, {
+                    "typeCode" : "SSN",
+                    "id" : "23917228334003"
+                  } ],
+                  "createdBy" : "Android.chen@sap.com",
+                  "changedBy" : "Android.chen@sap.com",
+                  "createdAt" : "2018-06-26T10:15:17.212Z",
+                  "changedAt" : "2018-06-26T10:15:17.212Z",
+                  "addresses" : [ {
+                    "addressUUID" : "af2e16c4-6212-11ea-bc55-0242ac130003",
+                    "email" : "jim.smith@abc.com",
+                    "phone" : "123123123",
+                    "street" : "5th Avenue",
+                    "additionalAddressInfo" : "W 9th St",
+                    "houseNumber" : "801",
+                    "city" : "New York",
+                    "state" : "AL",
+                    "postalCode" : "100000",
+                    "country" : "US",
+                    "isDefault" : true
+                  } ],
+                  "defaultAddress" : {
+                    "addressUUID" : "af2e16c4-6212-11ea-bc55-0242ac130003",
+                    "email" : "jim.smith@abc.com",
+                    "phone" : "123123123",
+                    "street" : "5th Avenue",
+                    "additionalAddressInfo" : "W 9th St",
+                    "houseNumber" : "801",
+                    "city" : "New York",
+                    "state" : "AL",
+                    "postalCode" : "100000",
+                    "country" : "US",
+                    "isDefault" : true
+                  },
+                  "markets" : [ {
+                    "marketId" : "A1",
+                    "currency" : "USD",
+                    "country" : "US",
+                    "salesArea" : {
+                      "salesOrganization" : "0001",
+                      "distributionChannel" : "01",
+                      "division" : "01"
+                    },
+                    "active" : true,
+                    "priceInfo" : {
+                      "priceGroup" : "AAAA",
+                      "priceListType" : "list",
+                      "incoterms" : "pricing",
+                      "incotermsLocation" : "CDC"
+                    }
+                  }, {
+                    "marketId" : "A2",
+                    "currency" : "USD",
+                    "country" : "US",
+                    "salesArea" : {
+                      "salesOrganization" : "0002",
+                      "distributionChannel" : "02",
+                      "division" : "02"
+                    },
+                    "active" : true,
+                    "priceInfo" : {
+                      "priceGroup" : "BBBB",
+                      "priceListType" : "list",
+                      "incoterms" : "pricing",
+                      "incotermsLocation" : "CDC"
+                    }
+                  }, {
+                    "marketId" : "A3",
+                    "currency" : "USD",
+                    "country" : "US",
+                    "salesArea" : {
+                      "salesOrganization" : "0003",
+                      "distributionChannel" : "03",
+                      "division" : "03"
+                    },
+                    "active" : true,
+                    "priceInfo" : {
+                      "priceGroup" : "CCCC",
+                      "priceListType" : "list",
+                      "incoterms" : "pricing",
+                      "incotermsLocation" : "CDC"
+                    }
+                  } ]
+                }, {
+                  "customerNumber" : "7539621408",
+                  "mdiId" : "506b4bc3-45fc-1eeb-bc85-9d1d216aa8da",
+                  "customerType" : "CORPORATE",
+                  "corporateInfo" : {
+                    "company" : "SAP"
+                  },
+                  "personalInfo" : { },
+                  "externalObjectReferences" : [ {
+                    "externalSystemId" : "test",
+                    "externalIdTypeCode" : "201",
+                    "externalId" : "123456789"
+                  } ],
+                  "customReferences" : [ {
+                    "typeCode" : "CID",
+                    "id" : "23917228"
+                  }, {
+                    "typeCode" : "SSN",
+                    "id" : "23917228334003"
+                  } ],
+                  "createdBy" : "Android.chen@sap.com",
+                  "changedBy" : "Android.chen@sap.com",
+                  "createdAt" : "2018-06-26T10:15:17.212Z",
+                  "changedAt" : "2018-06-26T10:15:17.212Z",
+                  "addresses" : [ {
+                    "addressUUID" : "af2e16c4-6212-11ea-bc55-0242ac130003",
+                    "email" : "jim.smith@abc.com",
+                    "phone" : "123123123",
+                    "street" : "5th Avenue",
+                    "additionalAddressInfo" : "W 9th St",
+                    "houseNumber" : "801",
+                    "city" : "New York",
+                    "state" : "AL",
+                    "postalCode" : "100000",
+                    "country" : "US",
+                    "isDefault" : true
+                  } ],
+                  "defaultAddress" : {
+                    "addressUUID" : "af2e16c4-6212-11ea-bc55-0242ac130003",
+                    "email" : "jim.smith@abc.com",
+                    "phone" : "123123123",
+                    "street" : "5th Avenue",
+                    "additionalAddressInfo" : "W 9th St",
+                    "houseNumber" : "801",
+                    "city" : "New York",
+                    "state" : "AL",
+                    "postalCode" : "100000",
+                    "country" : "US",
+                    "isDefault" : true
+                  },
+                  "markets" : [ {
+                    "marketId" : "A1",
+                    "currency" : "USD",
+                    "country" : "US",
+                    "salesArea" : {
+                      "salesOrganization" : "0001",
+                      "distributionChannel" : "01",
+                      "division" : "01"
+                    },
+                    "active" : true,
+                    "priceInfo" : {
+                      "priceGroup" : "AAAA",
+                      "priceListType" : "list",
+                      "incoterms" : "pricing",
+                      "incotermsLocation" : "CDC"
+                    }
+                  }, {
+                    "marketId" : "A2",
+                    "currency" : "USD",
+                    "country" : "US",
+                    "salesArea" : {
+                      "salesOrganization" : "0002",
+                      "distributionChannel" : "02",
+                      "division" : "02"
+                    },
+                    "active" : true,
+                    "priceInfo" : {
+                      "priceGroup" : "BBBB",
+                      "priceListType" : "list",
+                      "incoterms" : "pricing",
+                      "incotermsLocation" : "CDC"
+                    }
+                  }, {
+                    "marketId" : "A3",
+                    "currency" : "USD",
+                    "country" : "US",
+                    "salesArea" : {
+                      "salesOrganization" : "0003",
+                      "distributionChannel" : "03",
+                      "division" : "03"
+                    },
+                    "active" : true,
+                    "priceInfo" : {
+                      "priceGroup" : "CCCC",
+                      "priceListType" : "list",
+                      "incoterms" : "pricing",
+                      "incotermsLocation" : "CDC"
+                    }
+                  } ]
+                } ]
+              }
+            }
+          },
+          "400" : {
+            "description" : "Your input data is not valid or not in a consistent format. Please check it and try again. You can also check the response payload for more information.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 400,
+                  "message" : "There are validation problems, see details section for more information",
+                  "type" : "validation_violation",
+                  "details" : [ {
+                    "field" : "q",
+                    "message" : "not a valid query",
+                    "type" : "invalid_query_parameter"
+                  } ]
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "There is a problem with your token. Generate a new token as described in the API Guide.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 401,
+                  "message" : "Authorization: Unauthorized. Bearer TOKEN is invalid",
+                  "type" : "insufficient_credentials"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "You do not have the necessary authorization as defined by the permissions (scopes) assigned to your user.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 403,
+                  "message" : "Given request does not have required scopes in access token. It is not authorized to perform this operation.",
+                  "type" : "insufficient_permissions"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "There was an error on the server side. If the problem persists, please report the error as described by SAP.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 500,
+                  "message" : "Something went wrong while processing the request. Please contact the administrator.",
+                  "type" : "internal_service_error"
+                }
+              }
+            }
+          },
+          "503" : {
+            "description" : "Service unavailable. The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.",
+            "content" : { }
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "{identityzone}.business-partner-customer_view" ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "Customer Management" ],
+        "summary" : "Creates a customer.",
+        "description" : "Before you use this operation, check the [API Guide](https://help.sap.com/viewer/987aec876092428f88162e438acf80d6/latest/en-US/7373ddb2b26d4b25b4b7768eb8d24f72.html) for important information.<br><br>This operation requires the scope `business-partner-customer_manage`.",
+        "operationId" : "POST_customers",
+        "parameters" : [ {
+          "name" : "externalSystemId",
+          "in" : "header",
+          "description" : "The ID of the external system that is used for data replication in an integration scenario. When this header is specified, the replication status of the external system will be set to true.",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "The customer to be created.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/postCustomerSchema"
+              },
+              "example" : {
+                "customerNumber" : "1230456789",
+                "mdiId" : "6ef35ba1-5d98-4cce-9482-ee1029d006ef",
+                "customerType" : "INDIVIDUAL",
+                "personalInfo" : {
+                  "firstName" : "Android",
+                  "lastName" : "Lee"
+                },
+                "externalObjectReferenceListCompleteIndicator" : false,
+                "externalObjectReferences" : [ {
+                  "externalSystemId" : "test",
+                  "externalIdTypeCode" : "201",
+                  "externalId" : "123456789"
+                } ],
+                "addresses" : [ {
+                  "addressUUID" : "af2e16c4-6212-11ea-bc55-0242ac130003",
+                  "email" : "jim.smith@abc.com",
+                  "phone" : "123123123",
+                  "street" : "5th Avenue",
+                  "additionalAddressInfo" : "W 9th St",
+                  "houseNumber" : "801",
+                  "city" : "New York",
+                  "state" : "AL",
+                  "postalCode" : "100000",
+                  "country" : "US",
+                  "isDefault" : true
+                } ],
+                "customReferences" : [ {
+                  "typeCode" : "CID",
+                  "id" : "1234"
+                } ],
+                "markets" : [ {
+                  "salesArea" : {
+                    "salesOrganization" : "0001",
+                    "distributionChannel" : "01",
+                    "division" : "01"
+                  },
+                  "active" : true
+                }, {
+                  "salesArea" : {
+                    "salesOrganization" : "0002",
+                    "distributionChannel" : "02",
+                    "division" : "02"
+                  },
+                  "active" : true
+                }, {
+                  "salesArea" : {
+                    "salesOrganization" : "0003",
+                    "distributionChannel" : "03",
+                    "division" : "03"
+                  },
+                  "active" : true
+                } ]
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Customer created successfully.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/resourceLocation"
+                },
+                "example" : {
+                  "id" : "9606615734"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Your input data is not valid or not in a consistent format. Please check it and try again. You can also check the response payload for more information.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 400,
+                  "message" : "The request payload has incorrect syntax.",
+                  "type" : "bad_payload_syntax"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "There is a problem with your token. Generate a new token as described in the API Guide.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 401,
+                  "message" : "Authorization: Unauthorized. Bearer TOKEN is invalid",
+                  "type" : "insufficient_credentials"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "You do not have the necessary authorization as defined by the permissions (scopes) assigned to your user.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 403,
+                  "message" : "Given request does not have required scopes in access token. It is not authorized to perform this operation.",
+                  "type" : "insufficient_permissions"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Customer creation failed because the resource already exists or was updated by another user in the meantime.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 409,
+                  "message" : "The requested resource could not be created due to server-side validation.",
+                  "type" : "conflict_resource"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "There was an error on the server side. If the problem persists, please report the error as described by SAP.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 500,
+                  "message" : "Something went wrong while processing the request. Please contact the administrator.",
+                  "type" : "internal_service_error"
+                }
+              }
+            }
+          },
+          "503" : {
+            "description" : "Service unavailable. The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.",
+            "content" : { }
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "{identityzone}.business-partner-customer_manage" ]
+        } ],
+        "x-codegen-request-body-name" : "postCustomerSchema"
+      }
+    },
+    "/customers/{customerNumber}" : {
+      "get" : {
+        "tags" : [ "Customer Management" ],
+        "summary" : "Retrieves a customer.",
+        "description" : "Retrieves a single customer with a specific identifier.<br><br>This operation requires the scope `business-partner-customer_view`.",
+        "operationId" : "GET_customers-customerNumber",
+        "parameters" : [ {
+          "name" : "customerNumber",
+          "in" : "path",
+          "description" : "Specific customer number to identify one customer.",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "example" : "3176169607"
+        }, {
+          "name" : "expand",
+          "in" : "query",
+          "description" : "Controls which elements of a customer are expanded (included) in the returned customer.\nAvailable elements are:\n    \n- `markets` - includes markets information.\n- `addresses` - includes all customer addresses.\n- `defaultAddress` - includes the default address as defaultAddress property.\n- `customReferences` - includes custom references information.\n- `all` - includes all markets, addresses, defaultAddress information.\n\nThe elements can be combined by separating them with a comma.",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Customer retrieved successfully.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/customer"
+                },
+                "example" : {
+                  "customerNumber" : "7563214809",
+                  "mdiId" : "506b4bc3-45fc-1eeb-bc85-9d1d216aa8de",
+                  "customerType" : "INDIVIDUAL",
+                  "personalInfo" : {
+                    "firstName" : "Android",
+                    "lastName" : "Lee"
+                  },
+                  "externalObjectReferences" : [ {
+                    "externalSystemId" : "test",
+                    "externalIdTypeCode" : "201",
+                    "externalId" : "123456789"
+                  } ],
+                  "customReferences" : [ {
+                    "typeCode" : "CID",
+                    "id" : "23917228"
+                  }, {
+                    "typeCode" : "SSN",
+                    "id" : "23917228334003"
+                  } ],
+                  "createdBy" : "Android.chen@sap.com",
+                  "changedBy" : "Android.chen@sap.com",
+                  "createdAt" : "2018-06-26T10:15:17.212Z",
+                  "changedAt" : "2018-06-26T10:15:17.212Z",
+                  "addresses" : [ {
+                    "addressUUID" : "af2e16c4-6212-11ea-bc55-0242ac130003",
+                    "email" : "jim.smith@abc.com",
+                    "phone" : "123123123",
+                    "street" : "5th Avenue",
+                    "additionalAddressInfo" : "W 9th St",
+                    "houseNumber" : "801",
+                    "city" : "New York",
+                    "state" : "AL",
+                    "postalCode" : "100000",
+                    "country" : "US",
+                    "isDefault" : true
+                  } ],
+                  "defaultAddress" : {
+                    "addressUUID" : "af2e16c4-6212-11ea-bc55-0242ac130003",
+                    "email" : "jim.smith@abc.com",
+                    "phone" : "123123123",
+                    "street" : "5th Avenue",
+                    "additionalAddressInfo" : "W 9th St",
+                    "houseNumber" : "801",
+                    "city" : "New York",
+                    "state" : "AL",
+                    "postalCode" : "100000",
+                    "country" : "US",
+                    "isDefault" : true
+                  },
+                  "markets" : [ {
+                    "marketId" : "A1",
+                    "currency" : "USD",
+                    "country" : "US",
+                    "salesArea" : {
+                      "salesOrganization" : "0001",
+                      "distributionChannel" : "01",
+                      "division" : "01"
+                    },
+                    "active" : true,
+                    "priceInfo" : {
+                      "priceGroup" : "AAAA",
+                      "priceListType" : "list",
+                      "incoterms" : "pricing",
+                      "incotermsLocation" : "CDC"
+                    }
+                  }, {
+                    "marketId" : "A2",
+                    "currency" : "USD",
+                    "country" : "US",
+                    "salesArea" : {
+                      "salesOrganization" : "0002",
+                      "distributionChannel" : "02",
+                      "division" : "02"
+                    },
+                    "active" : true,
+                    "priceInfo" : {
+                      "priceGroup" : "BBBB",
+                      "priceListType" : "list",
+                      "incoterms" : "pricing",
+                      "incotermsLocation" : "CDC"
+                    }
+                  }, {
+                    "marketId" : "A3",
+                    "currency" : "USD",
+                    "country" : "US",
+                    "salesArea" : {
+                      "salesOrganization" : "0003",
+                      "distributionChannel" : "03",
+                      "division" : "03"
+                    },
+                    "active" : true,
+                    "priceInfo" : {
+                      "priceGroup" : "CCCC",
+                      "priceListType" : "list",
+                      "incoterms" : "pricing",
+                      "incotermsLocation" : "CDC"
+                    }
+                  } ]
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Your input data is not valid or not in a consistent format. Please check it and try again. You can also check the response payload for more information.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 400,
+                  "message" : "The request payload has incorrect syntax.",
+                  "type" : "bad_payload_syntax"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "There is a problem with your token. Generate a new token as described in the API Guide.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 401,
+                  "message" : "Authorization: Unauthorized. Bearer TOKEN is invalid",
+                  "type" : "insufficient_credentials"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "You do not have the necessary authorization as defined by the permissions (scopes) assigned to your user.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 403,
+                  "message" : "Given request does not have required scopes in access token. It is not authorized to perform this operation.",
+                  "type" : "insufficient_permissions"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "The specified customer does not exist.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 404,
+                  "type" : "element_resource_non_existing",
+                  "message" : "The requested URI does not map to a single element resource.",
+                  "details" : [ ]
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "There was an error on the server side. If the problem persists, please report the error as described by SAP.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 500,
+                  "message" : "Something went wrong while processing the request. Please contact the administrator.",
+                  "type" : "internal_service_error"
+                }
+              }
+            }
+          },
+          "503" : {
+            "description" : "Service unavailable. The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.",
+            "content" : { }
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "{identityzone}.business-partner-customer_view" ]
+        } ]
+      },
+      "put" : {
+        "tags" : [ "Customer Management" ],
+        "summary" : "Updates a customer.",
+        "description" : "Updates a single customer with a specific identifier.<br>Before you use this operation, check the [API Guide](https://help.sap.com/viewer/987aec876092428f88162e438acf80d6/latest/en-US/1869a4d94786454e89935d860114c2a6.html) for important information.<br><br>This operation requires the scope `business-partner-customer_manage`.",
+        "operationId" : "PUT_customers-customerNumber",
+        "parameters" : [ {
+          "name" : "customerNumber",
+          "in" : "path",
+          "description" : "Specific customer number to identify one customer.",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "example" : "3176169607"
+        }, {
+          "name" : "externalSystemId",
+          "in" : "header",
+          "description" : "The ID of the external system that is used for data replication in an integration scenario. When this header is specified, the replication status of the external system will be set to true.",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "The customer to be updated.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/putCustomerSchema"
+              },
+              "example" : {
+                "customerNumber" : "1230456789",
+                "mdiId" : "6ef35ba1-5d98-4cce-9482-ee1029d006ef",
+                "customerType" : "INDIVIDUAL",
+                "personalInfo" : {
+                  "firstName" : "Android",
+                  "lastName" : "Lee"
+                },
+                "externalObjectReferenceListCompleteIndicator" : false,
+                "externalObjectReferences" : [ {
+                  "externalSystemId" : "test",
+                  "externalIdTypeCode" : "201",
+                  "externalId" : "123456789"
+                } ],
+                "addresses" : [ {
+                  "addressUUID" : "af2e16c4-6212-11ea-bc55-0242ac130003",
+                  "email" : "jim.smith@abc.com",
+                  "phone" : "123123123",
+                  "street" : "5th Avenue",
+                  "additionalAddressInfo" : "W 9th St",
+                  "houseNumber" : "801",
+                  "city" : "New York",
+                  "state" : "AL",
+                  "postalCode" : "100000",
+                  "country" : "US",
+                  "isDefault" : true
+                } ],
+                "customReferences" : [ {
+                  "typeCode" : "CID",
+                  "id" : "1234"
+                } ],
+                "markets" : [ {
+                  "salesArea" : {
+                    "salesOrganization" : "0001",
+                    "distributionChannel" : "01",
+                    "division" : "01"
+                  },
+                  "active" : true
+                }, {
+                  "salesArea" : {
+                    "salesOrganization" : "0002",
+                    "distributionChannel" : "02",
+                    "division" : "02"
+                  },
+                  "active" : true
+                }, {
+                  "salesArea" : {
+                    "salesOrganization" : "0003",
+                    "distributionChannel" : "03",
+                    "division" : "03"
+                  },
+                  "active" : true
+                } ]
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Request was successful.",
+            "content" : { }
+          },
+          "400" : {
+            "description" : "Your input data is not valid or not in a consistent format. Please check it and try again. You can also check the response payload for more information.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 400,
+                  "message" : "The request payload has incorrect syntax.",
+                  "type" : "bad_payload_syntax"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "There is a problem with your token. Generate a new token as described in the API Guide.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 401,
+                  "message" : "Authorization: Unauthorized. Bearer TOKEN is invalid",
+                  "type" : "insufficient_credentials"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "You do not have the necessary authorization as defined by the permissions (scopes) assigned to your user.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 403,
+                  "message" : "Given request does not have required scopes in access token. It is not authorized to perform this operation.",
+                  "type" : "insufficient_permissions"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "The specified customer does not exist.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 404,
+                  "type" : "element_resource_non_existing",
+                  "message" : "The requested URI does not map to a single element resource.",
+                  "details" : [ ]
+                }
+              }
+            }
+          },
+          "412" : {
+            "description" : "The target object is outdated because it is changed by someone else during processing the request.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 412,
+                  "message" : "The data you tried to update is not the latest. Please get the latest data.",
+                  "type" : "validation_violation"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "There was an error on the server side. If the problem persists, please report the error as described by SAP.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 500,
+                  "message" : "Something went wrong while processing the request. Please contact the administrator.",
+                  "type" : "internal_service_error"
+                }
+              }
+            }
+          },
+          "503" : {
+            "description" : "Service unavailable. The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.",
+            "content" : { }
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "{identityzone}.business-partner-customer_manage" ]
+        } ],
+        "x-codegen-request-body-name" : "putCustomerSchema"
+      },
+      "delete" : {
+        "tags" : [ "Customer Management" ],
+        "summary" : "Delete a customer.",
+        "description" : "Deletes a single customer with a specific identifier. The customer cannot be deleted when there are existing documents.<br><br>This operation requires the scope `business-partner-customer_delete`.",
+        "operationId" : "DELETE_customers-customerNumber",
+        "parameters" : [ {
+          "name" : "customerNumber",
+          "in" : "path",
+          "description" : "Specific customer number to identify one customer.",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "example" : "3176169607"
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "The customer is deleted successfully.",
+            "content" : { }
+          },
+          "400" : {
+            "description" : "The customer cannot be deleted since there are existing documents.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 400,
+                  "type" : "business_error",
+                  "message" : "The customer cannot be deleted since there are existing documents."
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "There is a problem with your token. Generate a new token as described in the API Guide.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 401,
+                  "message" : "Authorization: Unauthorized. Bearer TOKEN is invalid",
+                  "type" : "insufficient_credentials"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "You do not have the necessary authorization as defined by the permissions (scopes) assigned to your user.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 403,
+                  "message" : "Given request does not have required scopes in access token. It is not authorized to perform this operation.",
+                  "type" : "insufficient_permissions"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "The specified customer does not exist.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 404,
+                  "type" : "element_resource_non_existing",
+                  "message" : "The requested URI does not map to a single element resource.",
+                  "details" : [ ]
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "There was an error on the server side. If the problem persists, please report the error as described by SAP.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 500,
+                  "message" : "Something went wrong while processing the request. Please contact the administrator.",
+                  "type" : "internal_service_error"
+                }
+              }
+            }
+          },
+          "503" : {
+            "description" : "Service unavailable. The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.",
+            "content" : { }
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "{identityzone}.business-partner-customer_delete" ]
+        } ]
+      }
+    },
+    "/customers/{customerNumber}/externalObjectReferences" : {
+      "get" : {
+        "tags" : [ "Customer Management" ],
+        "summary" : "Retrieves external object references for a customer.",
+        "description" : "Retrieves the external object references for a single customer with a specific identifier.<br><br>This operation requires the scope `business-partner-customer_view`.",
+        "operationId" : "GET_customers-customerNumber-externalObjectReferences",
+        "parameters" : [ {
+          "name" : "customerNumber",
+          "in" : "path",
+          "description" : "Specific customer number to identify one customer.",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "example" : "3176169607"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "External object references retrieved successfully.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/getExternalIdSchema"
+                },
+                "example" : [ {
+                  "externalSystemType" : "dummy",
+                  "externalSystemId" : "dummy",
+                  "externalIdTypeCode" : "201",
+                  "externalId" : "123456789"
+                }, {
+                  "externalSystemType" : "dummy",
+                  "externalSystemId" : "test",
+                  "externalIdTypeCode" : "201",
+                  "externalId" : "123456789"
+                } ]
+              }
+            }
+          },
+          "401" : {
+            "description" : "There is a problem with your token. Generate a new token as described in the API Guide.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 401,
+                  "message" : "Authorization: Unauthorized. Bearer TOKEN is invalid",
+                  "type" : "insufficient_credentials"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "You do not have the necessary authorization as defined by the permissions (scopes) assigned to your user.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 403,
+                  "message" : "Given request does not have required scopes in access token. It is not authorized to perform this operation.",
+                  "type" : "insufficient_permissions"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "The specified customer does not exist.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 404,
+                  "type" : "element_resource_non_existing",
+                  "message" : "The requested URI does not map to a single element resource.",
+                  "details" : [ ]
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "There was an error on the server side. If the problem persists, please report the error as described by SAP.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 500,
+                  "message" : "Something went wrong while processing the request. Please contact the administrator.",
+                  "type" : "internal_service_error"
+                }
+              }
+            }
+          },
+          "503" : {
+            "description" : "Service unavailable. The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.",
+            "content" : { }
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "{identityzone}.business-partner-customer_view" ]
+        } ]
+      },
+      "put" : {
+        "tags" : [ "Customer Management" ],
+        "summary" : "Updates external object references for a customer.",
+        "description" : "Updates the external object references for a single customer with a specific identifier.<br>Before you use this operation, check the [API Guide](https://help.sap.com/viewer/987aec876092428f88162e438acf80d6/latest/en-US/15c565f688684c1f8219e8369ff3813f.html) for important information.<br><br>This operation requires the scope `business-partner-customer_manage`.",
+        "operationId" : "PUT_customers-customerNumber-externalObjectReferences",
+        "parameters" : [ {
+          "name" : "customerNumber",
+          "in" : "path",
+          "description" : "Specific customer number to identify one customer.",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "example" : "3176169607"
+        }, {
+          "name" : "externalSystemId",
+          "in" : "header",
+          "description" : "The ID of the external system that is used for data replication in an integration scenario. When this header is specified, the replication status of the external system will be set to true.",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "The external object references to be updated.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/externalIdsSchema"
+              },
+              "example" : [ {
+                "externalSystemType" : "dummy",
+                "externalSystemId" : "dummy",
+                "externalIdTypeCode" : "201",
+                "externalId" : "123456789"
+              }, {
+                "externalSystemType" : "dummy",
+                "externalSystemId" : "test",
+                "externalIdTypeCode" : "201",
+                "externalId" : "123456789"
+              } ]
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Request was successful.",
+            "content" : { }
+          },
+          "400" : {
+            "description" : "Your input data is not valid or not in a consistent format. Please check it and try again. You can also check the response payload for more information.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 400,
+                  "message" : "The request payload has incorrect syntax.",
+                  "type" : "bad_payload_syntax"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "There is a problem with your token. Generate a new token as described in the API Guide.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 401,
+                  "message" : "Authorization: Unauthorized. Bearer TOKEN is invalid",
+                  "type" : "insufficient_credentials"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "You do not have the necessary authorization as defined by the permissions (scopes) assigned to your user.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 403,
+                  "message" : "Given request does not have required scopes in access token. It is not authorized to perform this operation.",
+                  "type" : "insufficient_permissions"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "The specified customer does not exist.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 404,
+                  "type" : "element_resource_non_existing",
+                  "message" : "The requested URI does not map to a single element resource.",
+                  "details" : [ ]
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "There was an error on the server side. If the problem persists, please report the error as described by SAP.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 500,
+                  "message" : "Something went wrong while processing the request. Please contact the administrator.",
+                  "type" : "internal_service_error"
+                }
+              }
+            }
+          },
+          "503" : {
+            "description" : "Service unavailable. The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.",
+            "content" : { }
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "{identityzone}.business-partner-customer_manage" ]
+        } ],
+        "x-codegen-request-body-name" : "externalIdsSchema"
+      }
+    },
+    "/contacts" : {
+      "get" : {
+        "tags" : [ "Contact Management" ],
+        "summary" : "Retrieves contacts.",
+        "description" : "Retrieves a collection of contacts that match the search criteria.<br><br>This operation requires the scope `business-partner-contact_view`.",
+        "operationId" : "GET_contacts",
+        "parameters" : [ {
+          "name" : "notReplicatedWithExternalSystemId",
+          "in" : "query",
+          "description" : "This query parameter is used to fetch contact data that was not replicated. If this parameter is specified, the query parameter **q** will have no effect on the returned results.",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "pageNumber",
+          "in" : "query",
+          "description" : "The page number to be retrieved where the size of the pages must be specified by the pageSize parameter. The number of the first page is 1.",
+          "schema" : {
+            "minimum" : 1,
+            "type" : "integer"
+          }
+        }, {
+          "name" : "pageSize",
+          "in" : "query",
+          "description" : "The number of records retrieved at one time.",
+          "schema" : {
+            "maximum" : 1000,
+            "minimum" : 1,
+            "type" : "integer",
+            "default" : 10
+          }
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "description" : "The list of comma-separated properties used to sort the results.\nBy default, the column values are sorted in ascending order. \nCan either be in the form of `fieldName`, `fieldName:asc`, or `fieldName:desc`.",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "q",
+          "in" : "query",
+          "description" : "The simple query criteria based on available fields to limit returned results or a set of modified documents. A query string contains single or multiple key words. If multiple key words are used, use a space to separate key words. The wildcard (*) is supported to represent one or more characters. If the query parameter q is not specified, only the latest 10 items created will be returned.If you want to search for a value that includes spaces, use '~~' to represent the spaces.Currently, we support the query formats below. Please use these formats to build your query string.\nAvailable formats are:\n\n- `OR` - firstName:Mark company:*ngom* lastName:*ab*\n- `AND` - createdAt>2017-06-14T09:07:15.096Z AND customerType:INDIVIDUAL AND externalObjectReferences.externalId!:1\n- `OR & AND` - (firstName:Mark company:*ngom* lastName:*a~~b*) AND createdAt>2017-06-14T09:07:15.096Z AND externalObjectReferences.externalId!:1\n\nThe following query key words are supported:\n\n- contactNumber\n- firstName\n- lastName\n- createdAt\n- changedAt\n- createdBy\n- changedBy\n- externalObjectReferences.externalSystemId\n- externalObjectReferences.externalId\n- externalObjectReferences.externalIdTypeCode\n\nThe value for createdAt and changedAt must be a UTC date and time in ISO 8601 format, such as: `yyyy-MM-dd'T'HH:mm:ss.SSSZ`.",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "$count",
+          "in" : "query",
+          "description" : "If `false`, the response headers `x-count` and `x-pagecount` will not be returned. The recommended setting is `false` if not otherwise required by a special use case, as this results in a significantly faster response time.",
+          "schema" : {
+            "type" : "boolean",
+            "format" : "boolean",
+            "default" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Contacts retrieved successfully.",
+            "headers" : {
+              "x-count" : {
+                "description" : "The total number of elements that fulfill the criteria.",
+                "schema" : {
+                  "type" : "integer"
+                }
+              },
+              "x-pagecount" : {
+                "description" : "The total number of pages that fulfill the criteria.",
+                "schema" : {
+                  "type" : "integer"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/contacts"
+                },
+                "example" : [ {
+                  "contactNumber" : "258963147",
+                  "personalInfo" : {
+                    "firstName" : "John",
+                    "lastName" : "Smith"
+                  },
+                  "externalObjectReferences" : [ {
+                    "externalSystemId" : "test",
+                    "externalIdTypeCode" : "201",
+                    "externalId" : "123456789"
+                  } ],
+                  "createdBy" : "Android",
+                  "changedBy" : "Android",
+                  "createdAt" : "2018-06-26T10:15:17.212Z",
+                  "changedAt" : "2018-06-26T10:15:17.212Z"
+                }, {
+                  "contactNumber" : "963147258",
+                  "personalInfo" : {
+                    "firstName" : "Andrioid",
+                    "lastName" : "Lee"
+                  },
+                  "externalObjectReferences" : [ {
+                    "externalSystemId" : "test",
+                    "externalIdTypeCode" : "201",
+                    "externalId" : "123456789"
+                  } ],
+                  "createdBy" : "Android",
+                  "changedBy" : "Android",
+                  "createdAt" : "2018-06-26T10:15:17.212Z",
+                  "changedAt" : "2018-06-26T10:15:17.212Z"
+                } ]
+              }
+            }
+          },
+          "400" : {
+            "description" : "Your input data is not valid or not in a consistent format. Please check it and try again. You can also check the response payload for more information.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 400,
+                  "message" : "There are validation problems, see details section for more information",
+                  "type" : "validation_violation",
+                  "details" : [ {
+                    "field" : "q",
+                    "message" : "not a valid query",
+                    "type" : "invalid_query_parameter"
+                  } ]
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "There is a problem with your token. Generate a new token as described in the API Guide.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 401,
+                  "message" : "Authorization: Unauthorized. Bearer TOKEN is invalid",
+                  "type" : "insufficient_credentials"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "You do not have the necessary authorization as defined by the permissions (scopes) assigned to your user.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 403,
+                  "message" : "Given request does not have required scopes in access token. It is not authorized to perform this operation.",
+                  "type" : "insufficient_permissions"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "There was an error on the server side. If the problem persists, please report the error as described by SAP.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 500,
+                  "message" : "Something went wrong while processing the request. Please contact the administrator.",
+                  "type" : "internal_service_error"
+                }
+              }
+            }
+          },
+          "503" : {
+            "description" : "Service unavailable. The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.",
+            "content" : { }
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "{identityzone}.business-partner-contact_view" ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "Contact Management" ],
+        "summary" : "Creates a contact.",
+        "description" : "Creates a new contact.<br><br>This operation requires the scope `business-partner-contact_manage`.",
+        "operationId" : "POST_contacts",
+        "parameters" : [ {
+          "name" : "externalSystemId",
+          "in" : "header",
+          "description" : "The ID of the external system that is used for data replication in an integration scenario. When this header is specified, the replication status of the external system will be set to true.",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "The contact to be created.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/postContactSchema"
+              },
+              "example" : {
+                "contactNumber" : "1234567890",
+                "personalInfo" : {
+                  "firstName" : "John",
+                  "lastName" : "Smith"
+                },
+                "externalObjectReferenceListCompleteIndicator" : false,
+                "externalObjectReferences" : [ {
+                  "externalSystemId" : "test",
+                  "externalIdTypeCode" : "201",
+                  "externalId" : "123456789"
+                } ]
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Contact created successfully.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/resourceLocation"
+                },
+                "example" : {
+                  "id" : "9606615734"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Your input data is not valid or not in a consistent format. Please check it and try again. You can also check the response payload for more information.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 400,
+                  "message" : "The request payload has incorrect syntax.",
+                  "type" : "bad_payload_syntax"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "There is a problem with your token. Generate a new token as described in the API Guide.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 401,
+                  "message" : "Authorization: Unauthorized. Bearer TOKEN is invalid",
+                  "type" : "insufficient_credentials"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "You do not have the necessary authorization as defined by the permissions (scopes) assigned to your user.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 403,
+                  "message" : "Given request does not have required scopes in access token. It is not authorized to perform this operation.",
+                  "type" : "insufficient_permissions"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Contact creation failed because the resource already exists or was updated by another user in the meantime.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 409,
+                  "message" : "The requested resource could not be created due to server-side validation.",
+                  "type" : "conflict_resource"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "There was an error on the server side. If the problem persists, please report the error as described by SAP.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 500,
+                  "message" : "Something went wrong while processing the request. Please contact the administrator.",
+                  "type" : "internal_service_error"
+                }
+              }
+            }
+          },
+          "503" : {
+            "description" : "Service unavailable. The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.",
+            "content" : { }
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "{identityzone}.business-partner-contact_manage" ]
+        } ],
+        "x-codegen-request-body-name" : "postContactSchema"
+      }
+    },
+    "/contacts/{contactNumber}" : {
+      "get" : {
+        "tags" : [ "Contact Management" ],
+        "summary" : "Retrieves a contact.",
+        "description" : "Retrieves a single contact with a specific identifier.<br><br>This operation requires the scope `business-partner-contact_view`.",
+        "operationId" : "GET_contacts-contactNumber",
+        "parameters" : [ {
+          "name" : "contactNumber",
+          "in" : "path",
+          "description" : "Specific customer number to identify one customer.",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "example" : "127378839"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Contact retrieved successfully.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/contact"
+                },
+                "example" : {
+                  "contactNumber" : "963147258",
+                  "personalInfo" : {
+                    "firstName" : "Andrioid",
+                    "lastName" : "Lee"
+                  },
+                  "externalObjectReferences" : [ {
+                    "externalSystemId" : "test",
+                    "externalIdTypeCode" : "201",
+                    "externalId" : "123456789"
+                  } ],
+                  "createdBy" : "Android",
+                  "changedBy" : "Android",
+                  "createdAt" : "2018-06-26T10:15:17.212Z",
+                  "changedAt" : "2018-06-26T10:15:17.212Z"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "There is a problem with your token. Generate a new token as described in the API Guide.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 401,
+                  "message" : "Authorization: Unauthorized. Bearer TOKEN is invalid",
+                  "type" : "insufficient_credentials"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "You do not have the necessary authorization as defined by the permissions (scopes) assigned to your user.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 403,
+                  "message" : "Given request does not have required scopes in access token. It is not authorized to perform this operation.",
+                  "type" : "insufficient_permissions"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "The specified contact does not exist.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 404,
+                  "type" : "element_resource_non_existing",
+                  "message" : "The requested URI does not map to a single element resource.",
+                  "details" : [ ]
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "There was an error on the server side. If the problem persists, please report the error as described by SAP.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 500,
+                  "message" : "Something went wrong while processing the request. Please contact the administrator.",
+                  "type" : "internal_service_error"
+                }
+              }
+            }
+          },
+          "503" : {
+            "description" : "Service unavailable. The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.",
+            "content" : { }
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "{identityzone}.business-partner-contact_view" ]
+        } ]
+      },
+      "put" : {
+        "tags" : [ "Contact Management" ],
+        "summary" : "Updates a contact.",
+        "description" : "Updates a single contact with a specific identifier.<br><br>This operation requires the scope `business-partner-contact_manage`.",
+        "operationId" : "PUT_contacts-contactNumber",
+        "parameters" : [ {
+          "name" : "contactNumber",
+          "in" : "path",
+          "description" : "Specific customer number to identify one customer.",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "example" : "127378839"
+        }, {
+          "name" : "externalSystemId",
+          "in" : "header",
+          "description" : "The ID of the external system that is used for data replication in an integration scenario. When this header is specified, the replication status of the external system will be set to true.",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "The contact to be updated.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/postContactSchema"
+              },
+              "example" : {
+                "contactNumber" : "1234567890",
+                "personalInfo" : {
+                  "firstName" : "John",
+                  "lastName" : "Smith"
+                },
+                "externalObjectReferenceListCompleteIndicator" : false,
+                "externalObjectReferences" : [ {
+                  "externalSystemId" : "test",
+                  "externalIdTypeCode" : "201",
+                  "externalId" : "123456789"
+                } ]
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Request was successful.",
+            "content" : { }
+          },
+          "400" : {
+            "description" : "Your input data is not valid or not in a consistent format. Please check it and try again. You can also check the response payload for more information.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 400,
+                  "message" : "The request payload has incorrect syntax.",
+                  "type" : "bad_payload_syntax"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "There is a problem with your token. Generate a new token as described in the API Guide.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 401,
+                  "message" : "Authorization: Unauthorized. Bearer TOKEN is invalid",
+                  "type" : "insufficient_credentials"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "You do not have the necessary authorization as defined by the permissions (scopes) assigned to your user.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 403,
+                  "message" : "Given request does not have required scopes in access token. It is not authorized to perform this operation.",
+                  "type" : "insufficient_permissions"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "The specified contact does not exist.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 404,
+                  "type" : "element_resource_non_existing",
+                  "message" : "The requested URI does not map to a single element resource.",
+                  "details" : [ ]
+                }
+              }
+            }
+          },
+          "412" : {
+            "description" : "The target object is outdated because it is changed by someone else during processing the request.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 412,
+                  "message" : "The data you tried to update is not the latest. Please get the latest data.",
+                  "type" : "validation_violation"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "There was an error on the server side. If the problem persists, please report the error as described by SAP.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 500,
+                  "message" : "Something went wrong while processing the request. Please contact the administrator.",
+                  "type" : "internal_service_error"
+                }
+              }
+            }
+          },
+          "503" : {
+            "description" : "Service unavailable. The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.",
+            "content" : { }
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "{identityzone}.business-partner-contact_manage" ]
+        } ],
+        "x-codegen-request-body-name" : "putContactSchema"
+      }
+    },
+    "/contacts/{contactNumber}/externalObjectReferences" : {
+      "get" : {
+        "tags" : [ "Contact Management" ],
+        "summary" : "Retrieve external object references for a contact.",
+        "description" : "Retrieves the external object references for a single contact with a specific identifier.<br><br>This operation requires the scope `business-partner-contact_view`.",
+        "operationId" : "GET_contacts-contactNumber-externalObjectReferences",
+        "parameters" : [ {
+          "name" : "contactNumber",
+          "in" : "path",
+          "description" : "Specific customer number to identify one customer.",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "example" : "127378839"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "External object references retrieved successfully.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/getExternalIdSchema"
+                },
+                "example" : [ {
+                  "externalSystemType" : "dummy",
+                  "externalSystemId" : "dummy",
+                  "externalIdTypeCode" : "201",
+                  "externalId" : "123456789"
+                }, {
+                  "externalSystemType" : "dummy",
+                  "externalSystemId" : "test",
+                  "externalIdTypeCode" : "201",
+                  "externalId" : "123456789"
+                } ]
+              }
+            }
+          },
+          "401" : {
+            "description" : "There is a problem with your token. Generate a new token as described in the API Guide.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 401,
+                  "message" : "Authorization: Unauthorized. Bearer TOKEN is invalid",
+                  "type" : "insufficient_credentials"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "You do not have the necessary authorization as defined by the permissions (scopes) assigned to your user.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 403,
+                  "message" : "Given request does not have required scopes in access token. It is not authorized to perform this operation.",
+                  "type" : "insufficient_permissions"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "The specified contact does not exist.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 404,
+                  "type" : "element_resource_non_existing",
+                  "message" : "The requested URI does not map to a single element resource.",
+                  "details" : [ ]
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "There was an error on the server side. If the problem persists, please report the error as described by SAP.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 500,
+                  "message" : "Something went wrong while processing the request. Please contact the administrator.",
+                  "type" : "internal_service_error"
+                }
+              }
+            }
+          },
+          "503" : {
+            "description" : "Service unavailable. The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.",
+            "content" : { }
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "{identityzone}.business-partner-contact_view" ]
+        } ]
+      },
+      "put" : {
+        "tags" : [ "Contact Management" ],
+        "summary" : "Updates external object references for a contact.",
+        "description" : "Updates the external object references for a single contact with a specific identifier.<br>Before you use this operation, check the [API Guide](https://help.sap.com/viewer/987aec876092428f88162e438acf80d6/latest/en-US/ac792f993e314ea18dd75b4a99f61a48.html) for important information.<br><br>This operation requires the scope `business-partner-contact_manage`.",
+        "operationId" : "PUT_contacts-contactNumber-externalObjectReferences",
+        "parameters" : [ {
+          "name" : "contactNumber",
+          "in" : "path",
+          "description" : "Specific customer number to identify one customer.",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "example" : "127378839"
+        }, {
+          "name" : "externalSystemId",
+          "in" : "header",
+          "description" : "The ID of the external system that is used for data replication in an integration scenario. When this header is specified, the replication status of the external system will be set to true.",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "The external object reference to be updated.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/externalIdsSchema"
+              },
+              "example" : [ {
+                "externalSystemType" : "dummy",
+                "externalSystemId" : "dummy",
+                "externalIdTypeCode" : "201",
+                "externalId" : "123456789"
+              }, {
+                "externalSystemType" : "dummy",
+                "externalSystemId" : "test",
+                "externalIdTypeCode" : "201",
+                "externalId" : "123456789"
+              } ]
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Request was successful.",
+            "content" : { }
+          },
+          "400" : {
+            "description" : "Your input data is not valid or not in a consistent format. Please check it and try again. You can also check the response payload for more information.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 400,
+                  "message" : "The request payload has incorrect syntax.",
+                  "type" : "bad_payload_syntax"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "There is a problem with your token. Generate a new token as described in the API Guide.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 401,
+                  "message" : "Authorization: Unauthorized. Bearer TOKEN is invalid",
+                  "type" : "insufficient_credentials"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "You do not have the necessary authorization as defined by the permissions (scopes) assigned to your user.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 403,
+                  "message" : "Given request does not have required scopes in access token. It is not authorized to perform this operation.",
+                  "type" : "insufficient_permissions"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "The specified contact does not exist.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 404,
+                  "type" : "element_resource_non_existing",
+                  "message" : "The requested URI does not map to a single element resource.",
+                  "details" : [ ]
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "There was an error on the server side. If the problem persists, please report the error as described by SAP.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 500,
+                  "message" : "Something went wrong while processing the request. Please contact the administrator.",
+                  "type" : "internal_service_error"
+                }
+              }
+            }
+          },
+          "503" : {
+            "description" : "Service unavailable. The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.",
+            "content" : { }
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "{identityzone}.business-partner-contact_manage" ]
+        } ],
+        "x-codegen-request-body-name" : "externalIdsSchema"
+      }
+    },
+    "/relationships/customer-contacts" : {
+      "get" : {
+        "tags" : [ "Relationship Management" ],
+        "summary" : "Retrieve relationships between customers and contacts.",
+        "description" : "Retrieves a collection of customer-contact relationships.<br><br>This operation requires the scope `business-partner-customer_view`.",
+        "operationId" : "GET_relationships-customer-contacts",
+        "parameters" : [ {
+          "name" : "notReplicatedWithExternalSystemId",
+          "in" : "query",
+          "description" : "This query parameter is used to fetch customer-contact relationship data that was not replicated. If this parameter is specified, the query parameter `q` will have no effect on the returned results.",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "pageNumber",
+          "in" : "query",
+          "description" : "The page number to be retrieved where the size of the pages must be specified by the pageSize parameter. The number of the first page is 1.",
+          "schema" : {
+            "minimum" : 1,
+            "type" : "integer"
+          }
+        }, {
+          "name" : "pageSize",
+          "in" : "query",
+          "description" : "The number of records retrieved at one time.",
+          "schema" : {
+            "maximum" : 1000,
+            "minimum" : 1,
+            "type" : "integer",
+            "default" : 10
+          }
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "description" : "The list of comma-separated properties used to sort the results.\nBy default, the column values are sorted in ascending order. \nCan either be in the form of `fieldName`, `fieldName:asc`, or `fieldName:desc`.",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "q",
+          "in" : "query",
+          "description" : "The simple query criteria based on available fields to limit returned results or a set of modified documents. A query string contains single or multiple key words. If multiple key words are used, use a space to separate key words. The wildcard (*) is supported to represent one or more characters. If the query parameter q is not specified, only the latest 10 items created will be returned.If you want to search for a value that includes spaces, use '~~' to represent the spaces.Currently, we support the query formats below. Please use these formats to build your query string.\nAvailable formats are:\n\n- `OR` - firstName:Mark company:*ngom* lastName:*ab*\n- `AND` - createdAt>2017-06-14T09:07:15.096Z AND customerType:INDIVIDUAL AND externalObjectReferences.externalId!:1\n- `OR & AND` - (firstName:Mark company:*ngom* lastName:*a~~b*) AND createdAt>2017-06-14T09:07:15.096Z AND externalObjectReferences.externalId!:1\n\nThe following query key words are supported:\n\n- customerNumber\n- contactNumber\n- phone\n- email\n- createdAt\n- changedAt\n- createdBy\n- changedBy\n\nThe value for createdAt and changedAt must be a UTC date and time in ISO 8601 format, such as: `yyyy-MM-dd'T'HH:mm:ss.SSSZ`.",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "$count",
+          "in" : "query",
+          "description" : "If `false`, the response headers `x-count` and `x-pagecount` will not be returned. The recommended setting is `false` if not otherwise required by a special use case, as this results in a significantly faster response time.",
+          "schema" : {
+            "type" : "boolean",
+            "format" : "boolean",
+            "default" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Relationships between customers and contacts retrieved successfully.",
+            "headers" : {
+              "x-count" : {
+                "description" : "The total number of elements that fulfill the criteria.",
+                "schema" : {
+                  "type" : "integer"
+                }
+              },
+              "x-pagecount" : {
+                "description" : "The total number of pages that fulfill the criteria.",
+                "schema" : {
+                  "type" : "integer"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/getCustomerContactRelationshipsSchema"
+                },
+                "example" : [ {
+                  "customerNumber" : "1234569870",
+                  "contactNumber" : "5478963210",
+                  "workplaceAddress" : {
+                    "addressUUID" : "af2e16c4-6212-11ea-bc55-0242ac130003",
+                    "email" : "test@test.com",
+                    "phone" : "028-1456-9863"
+                  },
+                  "createdBy" : "Android",
+                  "changedBy" : "Android",
+                  "createdAt" : "2018-06-26T10:15:17.212Z",
+                  "changedAt" : "2018-06-26T10:15:17.212Z",
+                  "isDefault" : true
+                }, {
+                  "customerNumber" : "5487321690",
+                  "contactNumber" : "7952136408",
+                  "workplaceAddress" : {
+                    "addressUUID" : "af2e16c4-6212-11ea-bc55-0242ac130003",
+                    "email" : "test@test.com",
+                    "phone" : "028-1456-9863"
+                  },
+                  "createdBy" : "Android",
+                  "changedBy" : "Android",
+                  "createdAt" : "2018-06-26T10:15:17.212Z",
+                  "changedAt" : "2018-06-26T10:15:17.212Z",
+                  "isDefault" : true
+                } ]
+              }
+            }
+          },
+          "400" : {
+            "description" : "Your input data is not valid or not in a consistent format. Please check it and try again. You can also check the response payload for more information.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 400,
+                  "message" : "There are validation problems, see details section for more information",
+                  "type" : "validation_violation",
+                  "details" : [ {
+                    "field" : "q",
+                    "message" : "not a valid query",
+                    "type" : "invalid_query_parameter"
+                  } ]
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "There is a problem with your token. Generate a new token as described in the API Guide.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 401,
+                  "message" : "Authorization: Unauthorized. Bearer TOKEN is invalid",
+                  "type" : "insufficient_credentials"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "You do not have the necessary authorization as defined by the permissions (scopes) assigned to your user.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 403,
+                  "message" : "Given request does not have required scopes in access token. It is not authorized to perform this operation.",
+                  "type" : "insufficient_permissions"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "There was an error on the server side. If the problem persists, please report the error as described by SAP.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 500,
+                  "message" : "Something went wrong while processing the request. Please contact the administrator.",
+                  "type" : "internal_service_error"
+                }
+              }
+            }
+          },
+          "503" : {
+            "description" : "Service unavailable. The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.",
+            "content" : { }
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "{identityzone}.business-partner-customer_view" ]
+        } ]
+      }
+    },
+    "/relationships/customer-contacts/{customerNumber}" : {
+      "get" : {
+        "tags" : [ "Relationship Management" ],
+        "summary" : "Retrieve customer-contact relationships for a customer.",
+        "description" : "Retrieves a collection of customer-contact relationships for the given customer.<br><br>This operation requires the scope `business-partner-customer_view`.",
+        "operationId" : "GET_relationships-customer-contacts-customernumber",
+        "parameters" : [ {
+          "name" : "customerNumber",
+          "in" : "path",
+          "description" : "Specific customer number to identify one customer.",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "example" : "3176169607"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Customer-contact relationships retrieved successfully for the given customer.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/getCustomerContactRelationshipsSchemabyCustomerNumber"
+                },
+                "example" : [ {
+                  "contactNumber" : "5478963210",
+                  "workplaceAddress" : {
+                    "addressUUID" : "af2e16c4-6212-11ea-bc55-0242ac130003",
+                    "email" : "test@test.com",
+                    "phone" : "028-1456-9863"
+                  },
+                  "createdBy" : "Android",
+                  "changedBy" : "Android",
+                  "createdAt" : "2018-06-26T10:15:17.212Z",
+                  "changedAt" : "2018-06-26T10:15:17.212Z",
+                  "isDefault" : true
+                } ]
+              }
+            }
+          },
+          "401" : {
+            "description" : "There is a problem with your token. Generate a new token as described in the API Guide.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 401,
+                  "message" : "Authorization: Unauthorized. Bearer TOKEN is invalid",
+                  "type" : "insufficient_credentials"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "You do not have the necessary authorization as defined by the permissions (scopes) assigned to your user.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 403,
+                  "message" : "Given request does not have required scopes in access token. It is not authorized to perform this operation.",
+                  "type" : "insufficient_permissions"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "The specified customer does not exist.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 404,
+                  "type" : "element_resource_non_existing",
+                  "message" : "The requested URI does not map to a single element resource.",
+                  "details" : [ ]
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "There was an error on the server side. If the problem persists, please report the error as described by SAP.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 500,
+                  "message" : "Something went wrong while processing the request. Please contact the administrator.",
+                  "type" : "internal_service_error"
+                }
+              }
+            }
+          },
+          "503" : {
+            "description" : "Service unavailable. The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.",
+            "content" : { }
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "{identityzone}.business-partner-customer_view" ]
+        } ]
+      }
+    },
+    "/relationships/customer-contacts/{customerNumber}/{contactNumber}" : {
+      "put" : {
+        "tags" : [ "Relationship Management" ],
+        "summary" : "Creates or updates the customer-contact relationship.",
+        "description" : "Creates or updates the relationship between a customer and a contact with specified IDs.<br><br>This operation requires the scope `business-partner-customer_manage`.",
+        "operationId" : "PUT_relationships-customer-contacts-customerNumber-contactNumber",
+        "parameters" : [ {
+          "name" : "customerNumber",
+          "in" : "path",
+          "description" : "Specific customer number to identify one customer.",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "example" : "3176169607"
+        }, {
+          "name" : "contactNumber",
+          "in" : "path",
+          "description" : "Specific customer number to identify one customer.",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "example" : "127378839"
+        }, {
+          "name" : "externalSystemId",
+          "in" : "header",
+          "description" : "The ID of the external system that is used for data replication in an integration scenario. When this header is specified, the replication status of the external system will be set to true.",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "The customer-contact relationship to be updated.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/putOneCustomerContactRelationship"
+              },
+              "example" : {
+                "workplaceAddress" : {
+                  "email" : "test@dummy.com",
+                  "phone" : "1234-2345",
+                  "addressUUID" : "1c67a421-a108-4c23-a992-29c69e33fb6c"
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Relationship for the given customer and contact created or updated successfully.",
+            "content" : { }
+          },
+          "400" : {
+            "description" : "Your input data is not valid or not in a consistent format. Please check it and try again. You can also check the response payload for more information.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 400,
+                  "message" : "The request payload has incorrect syntax.",
+                  "type" : "bad_payload_syntax"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "There is a problem with your token. Generate a new token as described in the API Guide.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 401,
+                  "message" : "Authorization: Unauthorized. Bearer TOKEN is invalid",
+                  "type" : "insufficient_credentials"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "You do not have the necessary authorization as defined by the permissions (scopes) assigned to your user.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 403,
+                  "message" : "Given request does not have required scopes in access token. It is not authorized to perform this operation.",
+                  "type" : "insufficient_permissions"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "The specified customer or contact does not exist.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 404,
+                  "type" : "element_resource_non_existing",
+                  "message" : "The requested URI does not map to a single element resource.",
+                  "details" : [ ]
+                }
+              }
+            }
+          },
+          "412" : {
+            "description" : "The target object is outdated because it is changed by someone else during processing the request.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 412,
+                  "message" : "The data you tried to update is not the latest. Please get the latest data.",
+                  "type" : "validation_violation"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "There was an error on the server side. If the problem persists, please report the error as described by SAP.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 500,
+                  "message" : "Something went wrong while processing the request. Please contact the administrator.",
+                  "type" : "internal_service_error"
+                }
+              }
+            }
+          },
+          "503" : {
+            "description" : "Service unavailable. The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.",
+            "content" : { }
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "{identityzone}.business-partner-customer_manage" ]
+        } ],
+        "x-codegen-request-body-name" : "putOneCustomerContactRelationship"
+      },
+      "delete" : {
+        "tags" : [ "Relationship Management" ],
+        "summary" : "Deletes the customer-contact relationship.",
+        "description" : "Deletes the relationship between a customer and a contact with specified IDs.<br><br>This operation requires the scope `business-partner-customer_manage`.",
+        "operationId" : "DELETE_relationships-customer-contacts-customerNumber-contactNumber",
+        "parameters" : [ {
+          "name" : "customerNumber",
+          "in" : "path",
+          "description" : "Specific customer number to identify one customer.",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "example" : "3176169607"
+        }, {
+          "name" : "contactNumber",
+          "in" : "path",
+          "description" : "Specific customer number to identify one customer.",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "example" : "127378839"
+        }, {
+          "name" : "externalSystemId",
+          "in" : "header",
+          "description" : "The ID of the external system that is used for data replication in an integration scenario. When this header is specified, the replication status of the external system will be set to true.",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Relationship for the given customer and contact deleted successfully.",
+            "content" : { }
+          },
+          "401" : {
+            "description" : "There is a problem with your token. Generate a new token as described in the API Guide.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 401,
+                  "message" : "Authorization: Unauthorized. Bearer TOKEN is invalid",
+                  "type" : "insufficient_credentials"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "You do not have the necessary authorization as defined by the permissions (scopes) assigned to your user.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 403,
+                  "message" : "Given request does not have required scopes in access token. It is not authorized to perform this operation.",
+                  "type" : "insufficient_permissions"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "The specified customer-contact relationship does not exist.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 404,
+                  "type" : "element_resource_non_existing",
+                  "message" : "The requested URI does not map to a single element resource.",
+                  "details" : [ ]
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "There was an error on the server side. If the problem persists, please report the error as described by SAP.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 500,
+                  "message" : "Something went wrong while processing the request. Please contact the administrator.",
+                  "type" : "internal_service_error"
+                }
+              }
+            }
+          },
+          "503" : {
+            "description" : "Service unavailable. The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.",
+            "content" : { }
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "{identityzone}.business-partner-customer_manage" ]
+        } ]
+      }
+    },
+    "/relationships/customer-contacts/{customerNumber}/{contactNumber}/state" : {
+      "post" : {
+        "tags" : [ "Relationship Management" ],
+        "summary" : "Assigns the default customer-contact relationship.",
+        "description" : "Assigns the default relationship between a customer and a contact.<br><br>This operation requires the scope `business-partner-customer_manage`.",
+        "operationId" : "POST_relationships-customer-contacts-customerNumber-contactNumber-state",
+        "parameters" : [ {
+          "name" : "customerNumber",
+          "in" : "path",
+          "description" : "Specific customer number to identify one customer.",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "example" : "3176169607"
+        }, {
+          "name" : "contactNumber",
+          "in" : "path",
+          "description" : "Specific customer number to identify one customer.",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "example" : "127378839"
+        }, {
+          "name" : "externalSystemId",
+          "in" : "header",
+          "description" : "The ID of the external system that is used for data replication in an integration scenario. When this header is specified, the replication status of the external system will be set to true.",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "The default date to be updated.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/postOneCustomerContactRelationshipDefault"
+              },
+              "example" : {
+                "isDefault" : true
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Request was successful.",
+            "content" : { }
+          },
+          "400" : {
+            "description" : "Your input data is not valid or not in a consistent format. Please check it and try again. You can also check the response payload for more information.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 400,
+                  "message" : "The request payload has incorrect syntax.",
+                  "type" : "bad_payload_syntax"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "There is a problem with your token. Generate a new token as described in the API Guide.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 401,
+                  "message" : "Authorization: Unauthorized. Bearer TOKEN is invalid",
+                  "type" : "insufficient_credentials"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "You do not have the necessary authorization as defined by the permissions (scopes) assigned to your user.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 403,
+                  "message" : "Given request does not have required scopes in access token. It is not authorized to perform this operation.",
+                  "type" : "insufficient_permissions"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "The specified customer or contact does not exist.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 404,
+                  "type" : "element_resource_non_existing",
+                  "message" : "The requested URI does not map to a single element resource.",
+                  "details" : [ ]
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "There was an error on the server side. If the problem persists, please report the error as described by SAP.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 500,
+                  "message" : "Something went wrong while processing the request. Please contact the administrator.",
+                  "type" : "internal_service_error"
+                }
+              }
+            }
+          },
+          "503" : {
+            "description" : "Service unavailable. The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.",
+            "content" : { }
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "{identityzone}.business-partner-customer_manage" ]
+        } ],
+        "x-codegen-request-body-name" : "postOneCustomerContactRelationshipDefault"
+      }
+    },
+    "/relationships/customer-contacts/replicationConfirmation" : {
+      "post" : {
+        "tags" : [ "Relationship Management" ],
+        "summary" : "Confirms replication of the customer-contact relationship.",
+        "description" : "Confirms that the customer-contact relationship was replicated.<br><br>This operation requires the scope `business-partner-customer_manage`.",
+        "operationId" : "POST_relationships-customer-contacts-replicationConfirmation",
+        "parameters" : [ {
+          "name" : "externalSystemId",
+          "in" : "header",
+          "description" : "The ID of the external system that is used for data replication in an integration scenario. When this header is specified, the replication status of the external system will be set to true.",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "The replication flag to be confirmed.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/postBPRelationSchemaCustomerContactsReplicationConfirmation"
+              },
+              "example" : {
+                "customerNumber" : "1234569870",
+                "contactNumber" : "5478963210",
+                "externalSystemId" : "OBU8343"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Request was successful.",
+            "content" : { }
+          },
+          "401" : {
+            "description" : "There is a problem with your token. Generate a new token as described in the API Guide.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 401,
+                  "message" : "Authorization: Unauthorized. Bearer TOKEN is invalid",
+                  "type" : "insufficient_credentials"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "You do not have the necessary authorization as defined by the permissions (scopes) assigned to your user.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 403,
+                  "message" : "Given request does not have required scopes in access token. It is not authorized to perform this operation.",
+                  "type" : "insufficient_permissions"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "The specified customer or contact does not exist.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 404,
+                  "type" : "element_resource_non_existing",
+                  "message" : "The requested URI does not map to a single element resource.",
+                  "details" : [ ]
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "There was an error on the server side. If the problem persists, please report the error as described by SAP.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 500,
+                  "message" : "Something went wrong while processing the request. Please contact the administrator.",
+                  "type" : "internal_service_error"
+                }
+              }
+            }
+          },
+          "503" : {
+            "description" : "Service unavailable. The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.",
+            "content" : { }
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "{identityzone}.business-partner-customer_manage" ]
+        } ],
+        "x-codegen-request-body-name" : "postBPRelationSchemaCustomerContactsReplicationConfirmation"
+      }
+    },
+    "/mdi/replication-reports" : {
+      "get" : {
+        "tags" : [ "Replication Monitoring" ],
+        "summary" : "Retrieves SAP Master Data Integration business partner replication reports.",
+        "description" : "Retrieves a collection of SAP Master Data Integration replication reports that match the search criteria.<br><br>This operation requires the scope `business-partner-mdi-replication-report_view`.",
+        "operationId" : "GET_mdi_replication_reports",
+        "parameters" : [ {
+          "name" : "pageNumber",
+          "in" : "query",
+          "description" : "The page number to be retrieved where the size of the pages must be specified by the pageSize parameter. The number of the first page is 1.",
+          "schema" : {
+            "minimum" : 1,
+            "type" : "integer"
+          }
+        }, {
+          "name" : "pageSize",
+          "in" : "query",
+          "description" : "The number of records retrieved at one time.",
+          "schema" : {
+            "maximum" : 1000,
+            "minimum" : 1,
+            "type" : "integer",
+            "default" : 10
+          }
+        }, {
+          "name" : "replicationStatus",
+          "in" : "query",
+          "description" : "Filter SAP Master Data Integration replication reports by replication status: `NOT_STARTED`, `FAILURE`, `SKIPPED`, or `SUCCESS`.",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "mdiId",
+          "in" : "query",
+          "description" : "Filter SAP Master Data Integration replication reports by SAP Master Data Integration instance identifier.",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "customerNumber",
+          "in" : "query",
+          "description" : "Filter SAP Master Data Integration replication reports by SAP Subscription Billing customer number.",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "$count",
+          "in" : "query",
+          "description" : "If `false`, the response headers `x-count` and `x-pagecount` will not be returned. The recommended setting is `false` if not otherwise required by a special use case, as this results in a significantly faster response time.",
+          "schema" : {
+            "type" : "boolean",
+            "format" : "boolean",
+            "default" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "SAP Master Data Integration replication reports retrieved successfully.",
+            "headers" : {
+              "x-count" : {
+                "description" : "The total number of elements that fulfill the criteria.",
+                "schema" : {
+                  "type" : "integer"
+                }
+              },
+              "x-pagecount" : {
+                "description" : "The total number of pages that fulfill the criteria.",
+                "schema" : {
+                  "type" : "integer"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/mdiReplicationReports"
+                },
+                "example" : [ {
+                  "mdiId" : "506b4bc3-45f4-1edc-88b7-0d20238545ab",
+                  "customerNumber" : "105145167",
+                  "changedAt" : "2021-10-19T02:29:41.562Z",
+                  "replicationStatus" : "SUCCESS"
+                }, {
+                  "mdiId" : "ecebb889-5a65-1eeb-a397-fbb0368c4617",
+                  "customerNumber" : "2266667969",
+                  "changedAt" : "2021-10-19T02:29:41.540Z",
+                  "replicationStatus" : "SUCCESS"
+                }, {
+                  "mdiId" : "506b4bc3-45fc-1eec-889d-eb8b27550ad1",
+                  "changedAt" : "2021-09-29T06:39:10.193Z",
+                  "replicationStatus" : "FAILURE",
+                  "failureReason" : {
+                    "code" : "ValidationError",
+                    "message" : "The specified market does not exist: [1090, 10, 00]."
+                  }
+                } ]
+              }
+            }
+          },
+          "400" : {
+            "description" : "Your input data is not valid or not in a consistent format. Please check it and try again. You can also check the response payload for more information.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 400,
+                  "message" : "There are validation problems, see details section for more information",
+                  "type" : "validation_violation",
+                  "details" : [ {
+                    "field" : "q",
+                    "message" : "not a valid query",
+                    "type" : "invalid_query_parameter"
+                  } ]
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "There is a problem with your token. Generate a new token as described in the API Guide.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 401,
+                  "message" : "Authorization: Unauthorized. Bearer TOKEN is invalid",
+                  "type" : "insufficient_credentials"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "You do not have the necessary authorization as defined by the permissions (scopes) assigned to your user.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 403,
+                  "message" : "Given request does not have required scopes in access token. It is not authorized to perform this operation.",
+                  "type" : "insufficient_permissions"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "There was an error on the server side. If the problem persists, please report the error as described by SAP.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorMessage"
+                },
+                "example" : {
+                  "status" : 500,
+                  "message" : "Something went wrong while processing the request. Please contact the administrator.",
+                  "type" : "internal_service_error"
+                }
+              }
+            }
+          },
+          "503" : {
+            "description" : "Service unavailable. The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.",
+            "content" : { }
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "{identityzone}.business-partner-mdi-replication-report_view" ]
+        } ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "customer" : {
+        "type" : "object",
+        "properties" : {
+          "customerNumber" : {
+            "type" : "string"
+          },
+          "mdiId" : {
+            "type" : "string",
+            "description" : "The identifier of the business partner instance in SAP Master Data Integration if this customer is replicated from SAP Master Data Integration."
+          },
+          "personalInfo" : {
+            "type" : "object",
+            "description" : "Mandatory fields for an individual customer that will be ignored when a corporate customer is created.",
+            "properties" : {
+              "firstName" : {
+                "type" : "string",
+                "description" : "First name of an individual customer."
+              },
+              "lastName" : {
+                "type" : "string",
+                "description" : "Last name of an individual customer. Mandatory field for personal information."
+              }
+            }
+          },
+          "corporateInfo" : {
+            "type" : "object",
+            "description" : "Mandatory fields for a corporate customer that will be ignored when an individual customer is created.",
+            "properties" : {
+              "company" : {
+                "type" : "string",
+                "description" : "Company name of the corporate customer."
+              }
+            }
+          },
+          "customerType" : {
+            "type" : "string",
+            "enum" : [ "INDIVIDUAL", "CORPORATE" ]
+          },
+          "externalObjectReferences" : {
+            "type" : "array",
+            "items" : {
+              "type" : "object",
+              "description" : "The customer identifier replicated from an external system. This reference contains the ID and type of the external system, the external ID of the customer, and the ID stored on the database of the external system. \nThe composite key of `externalSystemId` and `externalIdTypeCode` must be unique.",
+              "properties" : {
+                "externalSystemId" : {
+                  "type" : "string",
+                  "description" : "The identifier of an external system from which the customer data is replicated."
+                },
+                "externalIdTypeCode" : {
+                  "type" : "string",
+                  "description" : "The type of the external customer identifier replicated from an external system. The predefined codes are 201: Business Partner Number, 202: ERP Customer Number, 203: ERP Customer Number on Database, 211: Contract Account Number. Customized codes must start with the uppercase letter Z."
+                },
+                "externalId" : {
+                  "type" : "string",
+                  "description" : "The external customer identifier replicated from an external system."
+                }
+              }
+            }
+          },
+          "customReferences" : {
+            "type" : "array",
+            "items" : {
+              "type" : "object",
+              "properties" : {
+                "typeCode" : {
+                  "type" : "string",
+                  "pattern" : "^[A-Za-z0-9_]*$",
+                  "description" : "The code representing the type of the reference."
+                },
+                "id" : {
+                  "type" : "string",
+                  "maxLength" : 255,
+                  "description" : "The identifier of the reference."
+                }
+              }
+            }
+          },
+          "createdBy" : {
+            "type" : "string",
+            "description" : "The user that created the customer."
+          },
+          "changedBy" : {
+            "type" : "string",
+            "description" : "The user that changed the customer."
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "description" : "The date and time the customer was created."
+          },
+          "changedAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "description" : "The date and time the customer was changed."
+          },
+          "addresses" : {
+            "type" : "array",
+            "description" : "The list of customer addresses. Currently, only one address is supported.",
+            "items" : {
+              "type" : "object",
+              "description" : "The address of a customer.",
+              "properties" : {
+                "addressUUID" : {
+                  "type" : "string",
+                  "description" : "The unique identifier of the address."
+                },
+                "email" : {
+                  "type" : "string",
+                  "description" : "The email address."
+                },
+                "phone" : {
+                  "type" : "string",
+                  "description" : "The phone number."
+                },
+                "street" : {
+                  "type" : "string",
+                  "description" : "The street of the address."
+                },
+                "additionalAddressInfo" : {
+                  "type" : "string",
+                  "description" : "Additional information about the address that may provide country-specific details."
+                },
+                "houseNumber" : {
+                  "type" : "string",
+                  "description" : "The house number of the address."
+                },
+                "city" : {
+                  "type" : "string",
+                  "description" : "The city of the address."
+                },
+                "postalCode" : {
+                  "type" : "string",
+                  "description" : "The postal code of the address."
+                },
+                "state" : {
+                  "type" : "string",
+                  "description" : "The state of the address."
+                },
+                "country" : {
+                  "type" : "string",
+                  "description" : "The country / region of the address."
+                },
+                "isDefault" : {
+                  "type" : "boolean",
+                  "description" : "If true, the address is the default address."
+                }
+              }
+            }
+          },
+          "markets" : {
+            "type" : "array",
+            "description" : "The list of the markets assigned to a customer.",
+            "items" : {
+              "type" : "object",
+              "description" : "The market assigned to a customer.",
+              "properties" : {
+                "marketId" : {
+                  "type" : "string",
+                  "description" : "The market ID."
+                },
+                "currency" : {
+                  "type" : "string",
+                  "description" : "The currency of a market."
+                },
+                "country" : {
+                  "type" : "string",
+                  "description" : "The country / region of a market."
+                },
+                "salesArea" : {
+                  "type" : "object",
+                  "description" : "The sales area information of a market.",
+                  "properties" : {
+                    "salesOrganization" : {
+                      "type" : "string",
+                      "maxLength" : 4,
+                      "description" : "The sales organization of a market."
+                    },
+                    "distributionChannel" : {
+                      "type" : "string",
+                      "maxLength" : 2,
+                      "description" : "The distribution channel of a market."
+                    },
+                    "division" : {
+                      "type" : "string",
+                      "maxLength" : 2,
+                      "description" : "The division of a market."
+                    }
+                  }
+                },
+                "active" : {
+                  "type" : "boolean",
+                  "description" : "If true, this market is active."
+                },
+                "priceInfo" : {
+                  "type" : "object",
+                  "description" : "<b>Note:</b> These fields are currently not used.<br/>The market price information from an external system.",
+                  "properties" : {
+                    "priceGroup" : {
+                      "type" : "string",
+                      "description" : "The price group from an external system. The price group is a group of customers who share the same pricing requirements."
+                    },
+                    "priceListType" : {
+                      "type" : "string",
+                      "description" : "The price list type from an external system. The price list type defines the type and characteristics of a price list."
+                    },
+                    "incoterms" : {
+                      "type" : "string",
+                      "description" : "The market incoterms from an external system. Incoterms are a codification for commonly-used trading terms."
+                    },
+                    "incotermsLocation" : {
+                      "type" : "string",
+                      "description" : "Additional incoterms information regarding the location."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "customers" : {
+        "type" : "array",
+        "items" : {
+          "$ref" : "#/components/schemas/customer"
+        }
+      },
+      "contact" : {
+        "type" : "object",
+        "description" : "Single contact",
+        "properties" : {
+          "contactNumber" : {
+            "description" : "The unique identifier of a contact.",
+            "type" : "string"
+          },
+          "personalInfo" : {
+            "description" : "Personal information of a contact.",
+            "type" : "object",
+            "properties" : {
+              "firstName" : {
+                "type" : "string",
+                "description" : "First name of a contact.",
+                "maxLength" : 50
+              },
+              "lastName" : {
+                "type" : "string",
+                "description" : "Last name of a contact. Mandatory field for personal information.",
+                "maxLength" : 50
+              }
+            }
+          },
+          "externalObjectReferences" : {
+            "type" : "array",
+            "items" : {
+              "type" : "object",
+              "description" : "The contact identifier replicated from an external system. This reference contains the ID and type of the external system, the external ID of the customer, and the ID stored on the database of the external system. \nThe composite key of `externalSystemId` and `externalIdTypeCode` must be unique.",
+              "properties" : {
+                "externalSystemId" : {
+                  "type" : "string",
+                  "description" : "The identifier of an external system from which the customer data is replicated."
+                },
+                "externalIdTypeCode" : {
+                  "type" : "string",
+                  "description" : "The type of the external customer identifier replicated from an external system. The predefined codes are 201: Business Partner Number, 202: ERP Customer Number, 203: ERP Customer Number on Database, 211: Contract Account Number. Customized codes must start with the uppercase letter Z."
+                },
+                "externalId" : {
+                  "type" : "string",
+                  "description" : "The external customer identifier replicated from an external system."
+                }
+              }
+            }
+          },
+          "createdBy" : {
+            "type" : "string",
+            "description" : "The user that created the contact."
+          },
+          "changedBy" : {
+            "type" : "string",
+            "description" : "The user that changed the contact."
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "description" : "The date and time the contact was created."
+          },
+          "changedAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "description" : "The date and time the contact was changed."
+          }
+        }
+      },
+      "contacts" : {
+        "type" : "array",
+        "items" : {
+          "$ref" : "#/components/schemas/contact"
+        }
+      },
+      "postCustomerSchema" : {
+        "type" : "object",
+        "properties" : {
+          "customerNumber" : {
+            "type" : "string",
+            "description" : "The identifying number assigned to this customer. If the field is empty, a random number will be generated. If the field contains digits only, the leading zero will be removed.",
+            "maxLength" : 10,
+            "pattern" : "^([a-z_A-Z-0-9]+)$"
+          },
+          "mdiId" : {
+            "type" : "string",
+            "description" : "The corresponding SAP Master Data Integration instance identifier associated with this customer. It's immutable once it has been set.",
+            "maxLength" : 36
+          },
+          "personalInfo" : {
+            "type" : "object",
+            "description" : "Mandatory fields for an individual customer that will be ignored when a corporate customer is created.",
+            "properties" : {
+              "firstName" : {
+                "maxLength" : 50,
+                "type" : "string",
+                "description" : "First name of the customer."
+              },
+              "lastName" : {
+                "maxLength" : 50,
+                "type" : "string",
+                "description" : "Last name of the customer. Mandatory field for personal information."
+              }
+            }
+          },
+          "corporateInfo" : {
+            "type" : "object",
+            "description" : "Mandatory fields for a corporate customer that will be ignored when an individual customer is created.",
+            "properties" : {
+              "company" : {
+                "maxLength" : 80,
+                "type" : "string",
+                "description" : "Company name of the corporate customer."
+              }
+            }
+          },
+          "customerType" : {
+            "type" : "string",
+            "enum" : [ "INDIVIDUAL", "CORPORATE" ]
+          },
+          "externalObjectReferenceListCompleteIndicator" : {
+            "description" : "Indicates whether the external object references list is complete. The default value is `false`, meaning that the list should merge with original list.",
+            "type" : "boolean"
+          },
+          "externalObjectReferences" : {
+            "type" : "array",
+            "items" : {
+              "type" : "object",
+              "description" : "The customer identifier replicated from an external system. This reference contains the ID and type of the external system, the external ID of the customer, and the ID stored on the database of the external system. \nThe composite key of `externalSystemId` and `externalIdTypeCode` must be unique.",
+              "properties" : {
+                "externalSystemId" : {
+                  "type" : "string",
+                  "description" : "The identifier of an external system from which the customer data is replicated."
+                },
+                "externalIdTypeCode" : {
+                  "type" : "string",
+                  "description" : "The type of external customer identifier replicated from an external system. The predefined codes are 201: Business Partner Number, 202: ERP Customer Number, 203: ERP Customer Number on Database, 211: Contract Account Number. Customized codes must start with the uppercase letter Z."
+                },
+                "externalId" : {
+                  "type" : "string",
+                  "description" : "The external customer identifier replicated from an external system."
+                }
+              },
+              "required" : [ "externalSystemId", "externalIdTypeCode", "externalId" ]
+            }
+          },
+          "customReferences" : {
+            "type" : "array",
+            "items" : {
+              "type" : "object",
+              "properties" : {
+                "typeCode" : {
+                  "type" : "string",
+                  "pattern" : "^[A-Za-z0-9_]*$",
+                  "description" : "The code representing the type of the reference."
+                },
+                "id" : {
+                  "type" : "string",
+                  "maxLength" : 255,
+                  "description" : "The identifier of the reference."
+                }
+              },
+              "required" : [ "typeCode", "id" ]
+            }
+          },
+          "addresses" : {
+            "type" : "array",
+            "description" : "The list of customer addresses. Currently, only one address is supported. Whether the street, city, state and postalCode fields in the address are mandatory depends on the `AddressSettings` configuration value in Business Configuration for different countries. When the `completenessCheckActivation` value is set to `false`, no specific field is mandatory. When the `completenessCheckActivation` value is set to `true`, then check whether the specific field value for the country / region is true under `countrySpecificSettings`. For example, if the value of street is `true`, the street field is mandatory.",
+            "items" : {
+              "type" : "object",
+              "description" : "The address of a customer.",
+              "properties" : {
+                "addressUUID" : {
+                  "type" : "string",
+                  "description" : "The unique identifier of the address. If this field is empty, a random ID is generated.",
+                  "pattern" : "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+                },
+                "email" : {
+                  "type" : "string",
+                  "maxLength" : 241,
+                  "minLength" : 3,
+                  "pattern" : ".*@.*",
+                  "description" : "The email address."
+                },
+                "phone" : {
+                  "type" : "string",
+                  "maxLength" : 50,
+                  "description" : "The phone number."
+                },
+                "street" : {
+                  "type" : "string",
+                  "maxLength" : 200,
+                  "description" : "The street of the address."
+                },
+                "additionalAddressInfo" : {
+                  "type" : "string",
+                  "maxLength" : 200,
+                  "description" : "Additional information about the address that may provide country-specific details."
+                },
+                "houseNumber" : {
+                  "type" : "string",
+                  "maxLength" : 50,
+                  "description" : "The house number of the address."
+                },
+                "city" : {
+                  "type" : "string",
+                  "maxLength" : 200,
+                  "description" : "The city of the address."
+                },
+                "postalCode" : {
+                  "type" : "string",
+                  "maxLength" : 20,
+                  "description" : "The postal code of the address."
+                },
+                "state" : {
+                  "type" : "string",
+                  "maxLength" : 20,
+                  "description" : "The state of the address."
+                },
+                "country" : {
+                  "type" : "string",
+                  "maxLength" : 50,
+                  "description" : "The country / region of the address."
+                },
+                "isDefault" : {
+                  "type" : "boolean",
+                  "description" : "If true, this address is the default address."
+                }
+              },
+              "required" : [ "country" ]
+            }
+          },
+          "markets" : {
+            "type" : "array",
+            "description" : "The list of the markets assigned to a customer.",
+            "items" : {
+              "type" : "object",
+              "description" : "The market assigned to a customer.",
+              "properties" : {
+                "marketId" : {
+                  "type" : "string",
+                  "description" : "The identifier of the market assigned to a customer."
+                },
+                "salesArea" : {
+                  "type" : "object",
+                  "description" : "The sales area information of the market that should be matched to one of the markets defined within the business configuration. If a matched market cannot be found, just ignore this salesArea.",
+                  "properties" : {
+                    "salesOrganization" : {
+                      "type" : "string",
+                      "maxLength" : 4,
+                      "description" : "The sales organization of a market."
+                    },
+                    "distributionChannel" : {
+                      "type" : "string",
+                      "maxLength" : 2,
+                      "description" : "The distribution channel of a market."
+                    },
+                    "division" : {
+                      "type" : "string",
+                      "maxLength" : 2,
+                      "description" : "The division of a market."
+                    }
+                  }
+                },
+                "active" : {
+                  "type" : "boolean",
+                  "description" : "If true, the market is active."
+                }
+              }
+            }
+          }
+        },
+        "required" : [ "customerType", "addresses" ]
+      },
+      "externalIdsSchema" : {
+        "type" : "array",
+        "items" : {
+          "type" : "object",
+          "properties" : {
+            "externalSystemType" : {
+              "type" : "string",
+              "description" : "The type of an external system the customer data is replicated from."
+            },
+            "externalSystemId" : {
+              "type" : "string",
+              "description" : "The identifier of an external system the customer data is replicated from."
+            },
+            "externalIdTypeCode" : {
+              "type" : "string",
+              "description" : "The code represents the type of the external customer identifier replicated from an external system. The predefined codes are 201: Business Partner Number, 202: ERP Customer Number, 203: ERP Customer Number on Database, 211: Contract Account Number. Customized codes must start with the uppercase letter Z."
+            },
+            "externalId" : {
+              "type" : "string",
+              "description" : "The external customer identifier replicated from an external system."
+            }
+          },
+          "required" : [ "externalSystemId", "externalIdTypeCode", "externalId" ]
+        }
+      },
+      "resourceLocation" : {
+        "type" : "object",
+        "title" : "Resource Location",
+        "description" : "The schema showing the location of the new resource.",
+        "properties" : {
+          "id" : {
+            "description" : "The identifier of the created resource.",
+            "type" : "string"
+          }
+        },
+        "required" : [ "id" ]
+      },
+      "errorMessage" : {
+        "title" : "error",
+        "description" : "Schema for API specified errors.",
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "minimum" : 100,
+            "maximum" : 599,
+            "description" : "original HTTP error code, should be consistent with the response HTTP code",
+            "type" : "integer"
+          },
+          "type" : {
+            "pattern" : "[a-z]+[a-z_]*[a-z]+",
+            "description" : "classification of the error type, lower case with underscore eg validation_failure",
+            "type" : "string"
+          },
+          "message" : {
+            "description" : "descriptive error message for debugging",
+            "type" : "string"
+          },
+          "details" : {
+            "description" : "list of problems causing this error",
+            "type" : "array",
+            "items" : {
+              "title" : "errorDetail",
+              "description" : "schema for specific error cause",
+              "type" : "object",
+              "properties" : {
+                "field" : {
+                  "description" : "a bean notation expression specifying the element in request data causing the error, eg product.variants[3].name, this can be empty if violation was not field specific",
+                  "type" : "string"
+                },
+                "type" : {
+                  "pattern" : "[a-z]+[a-z_]*[a-z]+",
+                  "description" : "classification of the error detail type, lower case with underscore eg missing_value, this value must be always interpreted in context of the general error type.",
+                  "type" : "string"
+                },
+                "message" : {
+                  "description" : "descriptive error detail message for debugging",
+                  "type" : "string"
+                }
+              },
+              "required" : [ "type" ]
+            }
+          }
+        },
+        "required" : [ "status", "type" ]
+      },
+      "postContactSchema" : {
+        "type" : "object",
+        "properties" : {
+          "contactNumber" : {
+            "type" : "string",
+            "description" : "The identifying number assigned to this contact. If the field is empty, a random number will be generated. If the field contains digits only, the leading zero will be removed.",
+            "maxLength" : 10,
+            "pattern" : "^([a-z_A-Z-0-9]+)$"
+          },
+          "personalInfo" : {
+            "description" : "Personal information of a contact.",
+            "type" : "object",
+            "properties" : {
+              "firstName" : {
+                "type" : "string",
+                "description" : "First name of the contact."
+              },
+              "lastName" : {
+                "type" : "string",
+                "description" : "Last name of the contact. Mandatory field for personal information."
+              }
+            },
+            "required" : [ "lastName" ]
+          },
+          "externalObjectReferenceListCompleteIndicator" : {
+            "description" : "Indicates whether the external object references list is complete. The default value is `false`, meaning that the list should merge with the original list.",
+            "type" : "boolean"
+          },
+          "externalObjectReferences" : {
+            "type" : "array",
+            "items" : {
+              "type" : "object",
+              "description" : "The contact identifier replicated from an external system. This reference contains the ID and type of the external system, the external ID of the customer, and the ID stored on the database of the external system. \nThe composite key of `externalSystemId` and `externalIdTypeCode` must be unique.",
+              "properties" : {
+                "externalSystemId" : {
+                  "type" : "string",
+                  "description" : "The identifier of an external system from which the customer data is replicated."
+                },
+                "externalIdTypeCode" : {
+                  "type" : "string",
+                  "description" : "The type of external customer identifier replicated from an external system. The predefined codes are 201: Business Partner Number, 202: ERP Customer Number, 203: ERP Customer Number on Database, 211: Contract Account Number. Customized codes must start with the uppercase letter Z."
+                },
+                "externalId" : {
+                  "type" : "string",
+                  "description" : "The external customer identifier replicated from an external system."
+                }
+              },
+              "required" : [ "externalSystemId", "externalId" ]
+            }
+          }
+        },
+        "required" : [ "personalInfo" ]
+      },
+      "putCustomerSchema" : {
+        "type" : "object",
+        "properties" : {
+          "customerNumber" : {
+            "type" : "string",
+            "description" : "The identifying number assigned to this customer. If the filed is empty, a random number will be generated.",
+            "maxLength" : 10,
+            "pattern" : "^([a-z_A-Z-0-9]+)$"
+          },
+          "mdiId" : {
+            "type" : "string",
+            "description" : "The corresponding SAP Master Data Integration instance identifier associated with this customer. It's immutable once it has been set.",
+            "maxLength" : 36
+          },
+          "personalInfo" : {
+            "type" : "object",
+            "description" : "Mandatory fields for an individual customer that will be ignored when a corporate customer is created.",
+            "properties" : {
+              "firstName" : {
+                "maxLength" : 50,
+                "type" : "string",
+                "description" : "First name of the customer."
+              },
+              "lastName" : {
+                "maxLength" : 50,
+                "type" : "string",
+                "description" : "Last name of the customer. Mandatory field for personal information."
+              }
+            }
+          },
+          "corporateInfo" : {
+            "type" : "object",
+            "description" : "Mandatory fields for a corporate customer that will be ignored when an individual customer is created.",
+            "properties" : {
+              "company" : {
+                "maxLength" : 80,
+                "type" : "string",
+                "description" : "Company name of the corporate customer."
+              }
+            }
+          },
+          "customerType" : {
+            "type" : "string",
+            "enum" : [ "INDIVIDUAL", "CORPORATE" ]
+          },
+          "externalObjectReferenceListCompleteIndicator" : {
+            "description" : "Indicate whether the external object references list is complete. The default value is false, which means the list should merge with original list.",
+            "type" : "boolean"
+          },
+          "externalObjectReferences" : {
+            "type" : "array",
+            "items" : {
+              "type" : "object",
+              "description" : "The customer identifier replicated from an external system. This reference contains the ID and type of the external system, the external ID of the customer, and the ID stored on the database of the external system.",
+              "properties" : {
+                "externalSystemId" : {
+                  "type" : "string",
+                  "description" : "The identifier of an external system the customer data is replicated from."
+                },
+                "externalIdTypeCode" : {
+                  "type" : "string",
+                  "description" : "The code representing the type of the external customer identifier replicated from an external system. The predefined codes are 201: Business Partner Number, 202: ERP Customer Number, 203: ERP Customer Number on Database. Customized codes must start with the uppercase letter Z."
+                },
+                "externalId" : {
+                  "type" : "string",
+                  "description" : "The external customer identifier replicated from an external system."
+                }
+              },
+              "required" : [ "externalSystemId", "externalIdTypeCode", "externalId" ]
+            }
+          },
+          "customReferences" : {
+            "type" : "array",
+            "items" : {
+              "type" : "object",
+              "properties" : {
+                "typeCode" : {
+                  "type" : "string",
+                  "pattern" : "^[A-Za-z0-9_]*$",
+                  "description" : "The code representing the type of the reference."
+                },
+                "id" : {
+                  "type" : "string",
+                  "maxLength" : 255,
+                  "description" : "The identifier of the reference."
+                }
+              },
+              "required" : [ "typeCode", "id" ]
+            }
+          },
+          "addresses" : {
+            "type" : "array",
+            "description" : "The list of customer addresses. Currently, only one address is supported. Whether the street, city, state and postalCode fields in the address are mandatory depends on the AddressSettings configuration value in Business Configuration for different countries. When the completenessCheckActivation value is set to false, no specific field is mandatory. When the completenessCheckActivation value is set to true, then check whether the specific field value for the country / region is true under countrySpecificSettings. For example, if the value of street is true, the street field is mandatory.",
+            "items" : {
+              "type" : "object",
+              "description" : "The address of a customer.",
+              "properties" : {
+                "addressUUID" : {
+                  "type" : "string",
+                  "description" : "The unique identifier of the address. If this field is empty, the ID of the default address is assigned.",
+                  "pattern" : "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+                },
+                "email" : {
+                  "type" : "string",
+                  "maxLength" : 241,
+                  "minLength" : 3,
+                  "pattern" : ".*@.*",
+                  "description" : "The email address."
+                },
+                "phone" : {
+                  "type" : "string",
+                  "maxLength" : 50,
+                  "description" : "The phone number."
+                },
+                "street" : {
+                  "type" : "string",
+                  "maxLength" : 200,
+                  "description" : "The street of the address."
+                },
+                "additionalAddressInfo" : {
+                  "type" : "string",
+                  "maxLength" : 200,
+                  "description" : "Additional information about the address that may provide country-specific details."
+                },
+                "houseNumber" : {
+                  "type" : "string",
+                  "maxLength" : 50,
+                  "description" : "The house number of the address."
+                },
+                "city" : {
+                  "type" : "string",
+                  "maxLength" : 200,
+                  "description" : "The city of the address."
+                },
+                "postalCode" : {
+                  "type" : "string",
+                  "maxLength" : 20,
+                  "description" : "The postal code of the address."
+                },
+                "state" : {
+                  "type" : "string",
+                  "maxLength" : 20,
+                  "description" : "The state of the address."
+                },
+                "country" : {
+                  "type" : "string",
+                  "maxLength" : 50,
+                  "description" : "The country / region of the address."
+                },
+                "isDefault" : {
+                  "type" : "boolean",
+                  "description" : "If true, this address is the default address."
+                }
+              },
+              "required" : [ "country" ]
+            }
+          },
+          "markets" : {
+            "type" : "array",
+            "description" : "The list of the markets assigned to a customer.",
+            "items" : {
+              "type" : "object",
+              "description" : "The market assigned to a customer.",
+              "properties" : {
+                "marketId" : {
+                  "type" : "string",
+                  "description" : "The identifier of the market assigned to a customer."
+                },
+                "salesArea" : {
+                  "type" : "object",
+                  "description" : "The sales area information of the market that should be matched to one of the markets defined within the business configuration. If a matched market cannot be found, just ignore this salesArea.",
+                  "properties" : {
+                    "salesOrganization" : {
+                      "type" : "string",
+                      "maxLength" : 4,
+                      "description" : "The sales organization of a market."
+                    },
+                    "distributionChannel" : {
+                      "type" : "string",
+                      "maxLength" : 2,
+                      "description" : "The distribution channel of a market."
+                    },
+                    "division" : {
+                      "type" : "string",
+                      "maxLength" : 2,
+                      "description" : "The division of a market."
+                    }
+                  }
+                },
+                "active" : {
+                  "type" : "boolean",
+                  "description" : "If true, the market is active."
+                }
+              }
+            }
+          }
+        },
+        "required" : [ "customerType", "addresses" ]
+      },
+      "postBPRelationSchemaCustomerContactsReplicationConfirmation" : {
+        "type" : "object",
+        "properties" : {
+          "customerNumber" : {
+            "description" : "The unique identifier of a customer.",
+            "type" : "string"
+          },
+          "contactNumber" : {
+            "description" : "The unique identifier of a contact.",
+            "type" : "string"
+          },
+          "externalSystemId" : {
+            "description" : "The identifier of an external system the customer data is replicated from.",
+            "type" : "string"
+          }
+        },
+        "required" : [ "customerNumber", "contactNumber" ]
+      },
+      "getCustomerContactRelationshipsSchema" : {
+        "type" : "array",
+        "items" : {
+          "type" : "object",
+          "properties" : {
+            "customerNumber" : {
+              "description" : "The unique identifier of a customer.",
+              "type" : "string"
+            },
+            "contactNumber" : {
+              "description" : "The unique identifier of a contact.",
+              "type" : "string"
+            },
+            "workplaceAddress" : {
+              "description" : "The address of a contact related to the specific customer.",
+              "type" : "object",
+              "properties" : {
+                "addressUUID" : {
+                  "type" : "string",
+                  "description" : "The unique identifier of the address."
+                },
+                "email" : {
+                  "type" : "string",
+                  "maxLength" : 241,
+                  "minLength" : 3,
+                  "pattern" : ".*@.*",
+                  "description" : "The email address of a contact."
+                },
+                "phone" : {
+                  "type" : "string",
+                  "maxLength" : 50,
+                  "description" : "The phone number of a contact."
+                }
+              }
+            },
+            "createdBy" : {
+              "type" : "string",
+              "description" : "The user that created the relationship."
+            },
+            "changedBy" : {
+              "type" : "string",
+              "description" : "The user that changed the relationship."
+            },
+            "createdAt" : {
+              "type" : "string",
+              "format" : "date-time",
+              "description" : "The date and time the relationship was created."
+            },
+            "changedAt" : {
+              "type" : "string",
+              "format" : "date-time",
+              "description" : "The date and time the relationship was changed."
+            },
+            "isDefault" : {
+              "type" : "boolean",
+              "description" : "The default flag for this relationship."
+            }
+          }
+        }
+      },
+      "getCustomerContactRelationshipsSchemabyCustomerNumber" : {
+        "type" : "array",
+        "items" : {
+          "type" : "object",
+          "properties" : {
+            "contactNumber" : {
+              "description" : "The unique identifier of a contact.",
+              "type" : "string"
+            },
+            "workplaceAddress" : {
+              "description" : "The address of a contact related to the specific customer.",
+              "type" : "object",
+              "properties" : {
+                "addressUUID" : {
+                  "type" : "string",
+                  "description" : "The unique identifier of the address."
+                },
+                "email" : {
+                  "type" : "string",
+                  "maxLength" : 241,
+                  "minLength" : 3,
+                  "pattern" : ".*@.*",
+                  "description" : "The email address of a contact."
+                },
+                "phone" : {
+                  "type" : "string",
+                  "maxLength" : 50,
+                  "description" : "The phone number of a contact."
+                }
+              }
+            },
+            "createdBy" : {
+              "type" : "string",
+              "description" : "The user who created the relationship."
+            },
+            "changedBy" : {
+              "type" : "string",
+              "description" : "The user who changed the relationship."
+            },
+            "createdAt" : {
+              "type" : "string",
+              "format" : "date-time",
+              "description" : "The date and time when the relationship was created."
+            },
+            "changedAt" : {
+              "type" : "string",
+              "format" : "date-time",
+              "description" : "The date and time when the relationship was changed."
+            },
+            "isDefault" : {
+              "type" : "boolean",
+              "description" : "The default flag for this relationship."
+            }
+          }
+        }
+      },
+      "putOneCustomerContactRelationship" : {
+        "type" : "object",
+        "properties" : {
+          "workplaceAddress" : {
+            "description" : "The address of a contact related to the specific customer.",
+            "type" : "object",
+            "properties" : {
+              "addressUUID" : {
+                "type" : "string",
+                "description" : "The unique identifier of the address. If this field is empty, a random ID is generated when a new relationship is created.",
+                "pattern" : "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+              },
+              "email" : {
+                "type" : "string",
+                "maxLength" : 241,
+                "minLength" : 3,
+                "pattern" : ".*@.*",
+                "description" : "The email address of a contact."
+              },
+              "phone" : {
+                "type" : "string",
+                "maxLength" : 50,
+                "description" : "The phone number of a contact."
+              }
+            }
+          }
+        }
+      },
+      "postOneCustomerContactRelationshipDefault" : {
+        "type" : "object",
+        "properties" : {
+          "isDefault" : {
+            "type" : "boolean",
+            "description" : "The default property of a contact. Only the value `true` is accepted."
+          }
+        },
+        "required" : [ "isDefault" ]
+      },
+      "getExternalIdSchema" : {
+        "type" : "array",
+        "items" : {
+          "type" : "object",
+          "properties" : {
+            "externalSystemType" : {
+              "type" : "string",
+              "description" : "The type of an external system the customer data is replicated from."
+            },
+            "externalSystemId" : {
+              "type" : "string",
+              "description" : "The identifier of an external system the customer data is replicated from."
+            },
+            "externalIdTypeCode" : {
+              "type" : "string",
+              "description" : "The code represents the type of the external customer identifier replicated from an external system. The predefined codes are 201: Business Partner Number, 202: ERP Customer Number, 203: ERP Customer Number on Database, 211: Contract Account Number. Customized codes must start with the uppercase letter Z."
+            },
+            "externalId" : {
+              "type" : "string",
+              "description" : "The external customer identifier replicated from an external system."
+            }
+          },
+          "required" : [ "externalSystemId", "externalIdTypeCode", "externalId" ]
+        }
+      },
+      "mdiReplicationReport" : {
+        "type" : "object",
+        "properties" : {
+          "mdiId" : {
+            "type" : "string",
+            "description" : "The identifier of the business partner instance in SAP Master Data Integration"
+          },
+          "customerNumber" : {
+            "type" : "string",
+            "description" : "The Identifier of the Business Partner instance in SAP Subscription Billing"
+          },
+          "changedAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "description" : "The date and time the replication event was last changed."
+          },
+          "replicationStatus" : {
+            "type" : "string",
+            "description" : "The replication event status.",
+            "enum" : [ "NOT_STARTED", "FAILURE", "SKIPPED", "SUCCESS" ]
+          },
+          "failureReason" : {
+            "type" : "object",
+            "properties" : {
+              "code" : {
+                "type" : "string",
+                "description" : "The code for the failure reason."
+              },
+              "message" : {
+                "type" : "string",
+                "description" : "The detailed error message of the failure reason."
+              }
+            }
+          }
+        }
+      },
+      "mdiReplicationReports" : {
+        "type" : "array",
+        "items" : {
+          "$ref" : "#/components/schemas/mdiReplicationReport"
+        }
+      }
+    },
+    "securitySchemes" : {
+      "oauth2" : {
+        "type" : "oauth2",
+        "description" : "To use this API, log on to the SAP BTP (Business Technology Platform) cockpit to get a service key with OAuth client credentials. Then use the service key to generate an access/bearer token. <br>For more information, see the API Guide.",
+        "flows" : {
+          "clientCredentials" : {
+            "tokenUrl" : "https://{identityzone}.authentication.{region}.hana.ondemand.com/oauth/token",
+            "scopes" : {
+              "{identityzone}.business-partner-customer_manage" : "Create or update customer data.",
+              "{identityzone}.business-partner-customer_view" : "View customer data.",
+              "{identityzone}.business-partner-customer_delete" : "Delete customer data.",
+              "{identityzone}.business-partner-contact_manage" : "Create or update contact data.",
+              "{identityzone}.business-partner-contact_view" : "View contact data.",
+              "{identityzone}.business-partner-mdi-replication-report_view" : "View SAP Master Data Integration Replication reports."
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-sap-shortText" : "Manage business partners, including customers and contacts."
+}
